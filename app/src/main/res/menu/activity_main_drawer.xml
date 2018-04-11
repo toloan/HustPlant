@@ -5,34 +5,19 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_favorites"
+            android:icon="@drawable/ic_menu_favorites"
+            android:title="Map" />
+        <item
             android:id="@+id/nav_history"
             android:icon="@drawable/ic_menu_history"
             android:title="History" />
         <item
-            android:id="@+id/nav_tree_list"
-            android:icon="@drawable/ic_menu_tree_list"
-            android:title="Tree List" />
-        <item
-            android:id="@+id/nav_schedule"
-            android:icon="@drawable/ic_menu_schedule"
-            android:title="Schedule" />
-        <item
-            android:id="@+id/nav_favorites"
-            android:icon="@drawable/ic_menu_favorites"
-            android:title="Favorites" />
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_menu_settings"
+            android:title="Settings" />
+
     </group>
 
-    <item android:title="System">
-        <menu>
-            <item
-                android:id="@+id/nav_settings"
-                android:icon="@drawable/ic_menu_settings"
-                android:title="Settings" />
-            <item
-                android:id="@+id/nav_about"
-                android:icon="@drawable/ic_menu_about"
-                android:title="About" />
-        </menu>
-    </item>
 
 </menu>
