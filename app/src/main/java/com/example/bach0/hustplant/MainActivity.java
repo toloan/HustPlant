@@ -13,6 +13,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.example.bach0.hustplant.map.MapView;
 import com.example.bach0.hustplant.map.Place;
@@ -46,10 +48,46 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         MapView mapView = findViewById(R.id.map_view);
-        Place place1 = mapView.addPlace(266, 388, R.drawable.ic_menu_camera);
-        Place place2 = mapView.addPlace(393, 472, R.drawable.ic_menu_gallery);
+        final Place place1 = mapView.addPlace(266, 388, R.drawable.ic_menu_camera);
+        final Place place2 = mapView.addPlace(393, 472, R.drawable.ic_menu_gallery);
         place1.setColor(Color.RED);
         place2.setColor(Color.GREEN);
+        final Animation test_anim = AnimationUtils.loadAnimation(this, R.anim.test_anim);
+        final Animation test2_anim = AnimationUtils.loadAnimation(this, R.anim.test2_anim);
+        test_anim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                place1.startAnimation(test_anim);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        test2_anim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                place2.startAnimation(test2_anim);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        place1.startAnimation(test_anim);
+        place2.startAnimation(test2_anim);
     }
 
     @Override
