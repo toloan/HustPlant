@@ -10,14 +10,20 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.example.bach0.hustplant.map.MapView;
 import com.example.bach0.hustplant.map.Place;
+import com.mingle.sweetpick.CustomDelegate;
+import com.mingle.sweetpick.DimEffect;
+import com.mingle.sweetpick.Effect;
+import com.mingle.sweetpick.SweetSheet;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -88,6 +94,19 @@ public class MainActivity extends AppCompatActivity
         });
         place1.startAnimation(test_anim);
         place2.startAnimation(test2_anim);
+        place1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SweetSheet sweetSheet = new SweetSheet((ViewGroup)findViewById(R.id.main_layout));
+                CustomDelegate customDelegate = new CustomDelegate(true,CustomDelegate.AnimationType.DuangLayoutAnimation);
+                View treeInfoView = LayoutInflater.from(MainActivity.this).inflate(R.layout.tree_info_layout,null,false);
+                customDelegate.setCustomView(treeInfoView);
+                sweetSheet.setDelegate(customDelegate);
+                sweetSheet.setBackgroundClickEnable(false);
+                sweetSheet.show();
+            }
+        });
+
     }
 
     @Override

@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 
 import com.example.bach0.hustplant.R;
 
@@ -92,7 +93,6 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
             int size = 60;
             Point topLeft = new Point(place.position.x - size / 2, place.position.y - size);
             Point bottomRight = new Point((place.position.x + size / 2), place.position.y);
-            Log.d(TAG, "onViewportChanged: " + topLeft + " " + bottomRight);
             topLeft = mViewport.mapToViewport(topLeft.x, topLeft.y);
             bottomRight = mViewport.mapToViewport(bottomRight.x, bottomRight.y);
             place.setTop(topLeft.y);

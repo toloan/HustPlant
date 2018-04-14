@@ -290,8 +290,6 @@ public class MapViewport extends View {
     }
 
     public Point mapToViewport(int x, int y) {
-        Log.d(TAG, "mapToViewport: " + mContentRect.width() + " " + mCurrentViewport.width());
-        Log.d(TAG, "MapViewport: " + mMap.getWidth() + " " + mMap.getHeight());
         return new Point((int) ((x - (int) mCurrentViewport.left) * getScaleFactor()), (int) ((y - (int)
                         mCurrentViewport.top) * getScaleFactor()));
     }
