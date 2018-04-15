@@ -1,4 +1,4 @@
-package com.example.bach0.hustwater_history.database;
+package com.example.bach0.hustplant.database;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;

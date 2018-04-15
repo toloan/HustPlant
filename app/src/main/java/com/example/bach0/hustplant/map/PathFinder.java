@@ -3,7 +3,6 @@ package com.example.bach0.hustplant.map;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.common.collect.TreeMultimap;
 
@@ -13,8 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by bach0 on 4/12/2018.
@@ -79,10 +76,7 @@ public class PathFinder {
                     if (!openSet.contains(neighbor)) {
                         openSet.add(neighbor);
                     }
-                    float bonus = (255f - Color.red(mMap[neighbor.y][neighbor.x]))/255f;
-//                    if (Color.blue(mMap[neighbor.y][neighbor.x]) == 255 && Color.red(mMap[neighbor.y][neighbor.x])==0) {
-//                        bonus = 0;
-//                    }
+                    float bonus = (255f - Color.red(mMap[neighbor.y][neighbor.x])) / 255f;
                     Float tentativeGScore = gScore.get(current);
                     tentativeGScore += distance(current, neighbor) + bonus;
                     Float neighborGScore = gScore.get(neighbor);
@@ -92,9 +86,6 @@ public class PathFinder {
                     }
                     cameFrom.put(neighbor, current);
                     gScore.put(neighbor, tentativeGScore);
-
-//                    bonus = 0;
-//                    Log.d(TAG, "findPath: " + bonus + " " + tentativeGScore);
                     if (!closedSet.contains(neighbor))
                         fScore.insertOrUpdate(tentativeGScore + distance(neighbor, end) + bonus,
                                 neighbor);

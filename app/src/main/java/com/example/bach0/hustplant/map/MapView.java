@@ -4,22 +4,17 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
+import android.os.AsyncTask;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 
 import com.example.bach0.hustplant.R;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by bach0 on 4/13/2018.
@@ -39,25 +34,31 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
         this(context, attrs, 0);
     }
 
-    public MapView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public MapView(final Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         LayoutInflater.from(context).inflate(R.layout.map_content, this, true);
         mViewport = findViewById(R.id.map_viewport);
         mViewport.setListener(this);
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inScaled = false;
-        Bitmap routeBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable
-                .ic_route, options);
-        int[] routePixels = new int[routeBitmap.getWidth() * routeBitmap.getHeight()];
-        routeBitmap.getPixels(routePixels, 0, routeBitmap.getWidth(), 0, 0, routeBitmap.getWidth
-                (), routeBitmap.getHeight());
-        int[][] routeData = new int[routeBitmap.getHeight()][routeBitmap.getWidth()];
-        for (int i = 0; i < routeBitmap.getWidth(); i++) {
-            for (int j = 0; j < routeBitmap.getHeight(); j++) {
-                routeData[j][i] = routePixels[j * routeBitmap.getWidth() + i];
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inScaled = false;
+                Bitmap routeBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable
+                        .ic_route, options);
+                int[] routePixels = new int[routeBitmap.getWidth() * routeBitmap.getHeight()];
+                routeBitmap.getPixels(routePixels, 0, routeBitmap.getWidth(), 0, 0, routeBitmap
+                        .getWidth(), routeBitmap.getHeight());
+                int[][] routeData = new int[routeBitmap.getHeight()][routeBitmap.getWidth()];
+                for (int i = 0; i < routeBitmap.getWidth(); i++) {
+                    for (int j = 0; j < routeBitmap.getHeight(); j++) {
+                        routeData[j][i] = routePixels[j * routeBitmap.getWidth() + i];
+                    }
+                }
+                mPathFinder = new PathFinder(routeData);
             }
-        }
-        mPathFinder = new PathFinder(routeData);
+        });
+
     }
 
     @Override

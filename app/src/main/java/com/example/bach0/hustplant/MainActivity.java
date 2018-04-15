@@ -1,6 +1,7 @@
 package com.example.bach0.hustplant;
 
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -10,23 +11,30 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import com.example.bach0.hustplant.database.PlantDao;
+import com.example.bach0.hustplant.database.entity.Plant;
 import com.example.bach0.hustplant.map.MapView;
 import com.example.bach0.hustplant.map.Place;
-import com.mingle.sweetpick.CustomDelegate;
-import com.mingle.sweetpick.DimEffect;
-import com.mingle.sweetpick.Effect;
-import com.mingle.sweetpick.SweetSheet;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private static final String TAG = "MainActivity";
+    private MapView mMapView;
+
+    private static int blendColors(int color1, int color2, float ratio) {
+        final float inverseRation = 1f - ratio;
+        float r = (Color.red(color1) * ratio) + (Color.red(color2) * inverseRation);
+        float g = (Color.green(color1) * ratio) + (Color.green(color2) * inverseRation);
+        float b = (Color.blue(color1) * ratio) + (Color.blue(color2) * inverseRation);
+        return Color.rgb((int) r, (int) g, (int) b);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,60 +61,31 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        MapView mapView = findViewById(R.id.map_view);
-        final Place place1 = mapView.addPlace(266, 388, R.drawable.ic_menu_camera);
-        final Place place2 = mapView.addPlace(393, 472, R.drawable.ic_menu_gallery);
-        place1.setColor(Color.RED);
-        place2.setColor(Color.GREEN);
-        final Animation test_anim = AnimationUtils.loadAnimation(this, R.anim.test_anim);
-        final Animation test2_anim = AnimationUtils.loadAnimation(this, R.anim.test2_anim);
-        test_anim.setAnimationListener(new Animation.AnimationListener() {
+        mMapView = findViewById(R.id.map_view);
+        final PlantDao plantDao = App.get().getDatabase().plantDao();
+        AsyncTask.execute(new Runnable() {
             @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                place1.startAnimation(test_anim);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        test2_anim.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                place2.startAnimation(test2_anim);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
+            public void run() {
+                for (final Plant plant : plantDao.getAll()) {
+                    Log.d(TAG, "run: " + plant.getName());
+                    final Place place = mMapView.addPlace(plant.getPosition().x, plant
+                            .getPosition().y, plant.getResourceId());
+                    place.setColor(blendColors(Color.RED, Color.GREEN, plant
+                            .getWaterLevel() / plant.getTargetWaterLevel()));
+                    place.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Snackbar.make(view, "You are clicking on " + plant.getName(),
+                                    Snackbar
+                                            .LENGTH_LONG).show();
+                            Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R
+                                    .anim.test2_anim);
+                            place.startAnimation(anim);
+                        }
+                    });
+                }
             }
         });
-        place1.startAnimation(test_anim);
-        place2.startAnimation(test2_anim);
-        place1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SweetSheet sweetSheet = new SweetSheet((ViewGroup)findViewById(R.id.main_layout));
-                CustomDelegate customDelegate = new CustomDelegate(true,CustomDelegate.AnimationType.DuangLayoutAnimation);
-                View treeInfoView = LayoutInflater.from(MainActivity.this).inflate(R.layout.tree_info_layout,null,false);
-                customDelegate.setCustomView(treeInfoView);
-                sweetSheet.setDelegate(customDelegate);
-                sweetSheet.setBackgroundClickEnable(false);
-                sweetSheet.show();
-            }
-        });
-
     }
 
     @Override

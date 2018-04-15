@@ -62,6 +62,7 @@ public class MapViewport extends View {
 
             float focusX = scaleGestureDetector.getFocusX();
             float focusY = scaleGestureDetector.getFocusY();
+            focusY = mContentRect.bottom - (focusY -mContentRect.top) + mContentRect.top;
             hitTest(focusX, focusY, viewportFocus);
 
             mCurrentViewport.set(
