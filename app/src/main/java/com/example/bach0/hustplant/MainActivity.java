@@ -11,7 +11,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,7 +24,6 @@ import com.example.bach0.hustplant.map.Place;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    private static final String TAG = "MainActivity";
     private MapView mMapView;
 
     private static int blendColors(int color1, int color2, float ratio) {
@@ -36,6 +34,34 @@ public class MainActivity extends AppCompatActivity
         return Color.rgb((int) r, (int) g, (int) b);
     }
 
+    private void addAllPlants() {
+        for (final Plant plant : App.get().getDatabase().plantDao().getAll()) {
+            final Place place =
+                    mMapView.addPlace(
+                            plant.getPosition().x, plant.getPosition().y, plant.getResourceId());
+            place.setColor(
+                    blendColors(
+                            Color.RED,
+                            Color.GREEN,
+                            plant.getWaterLevel() / plant.getTargetWaterLevel()));
+            place.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Snackbar.make(
+                                            view,
+                                            "You are clicking on " + plant.getName(),
+                                            Snackbar.LENGTH_LONG)
+                                    .show();
+                            Animation anim =
+                                    AnimationUtils.loadAnimation(
+                                            MainActivity.this, R.anim.test2_anim);
+                            place.startAnimation(anim);
+                        }
+                    });
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,18 +70,24 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        fab.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null)
+                                .show();
+                    }
+                });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string
-                .navigation_drawer_close);
+        ActionBarDrawerToggle toggle =
+                new ActionBarDrawerToggle(
+                        this,
+                        drawer,
+                        toolbar,
+                        R.string.navigation_drawer_open,
+                        R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -63,29 +95,13 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         mMapView = findViewById(R.id.map_view);
         final PlantDao plantDao = App.get().getDatabase().plantDao();
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                for (final Plant plant : plantDao.getAll()) {
-                    Log.d(TAG, "run: " + plant.getName());
-                    final Place place = mMapView.addPlace(plant.getPosition().x, plant
-                            .getPosition().y, plant.getResourceId());
-                    place.setColor(blendColors(Color.RED, Color.GREEN, plant
-                            .getWaterLevel() / plant.getTargetWaterLevel()));
-                    place.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Snackbar.make(view, "You are clicking on " + plant.getName(),
-                                    Snackbar
-                                            .LENGTH_LONG).show();
-                            Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R
-                                    .anim.test2_anim);
-                            place.startAnimation(anim);
-                        }
-                    });
-                }
-            }
-        });
+        AsyncTask.execute(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        addAllPlants();
+                    }
+                });
     }
 
     @Override

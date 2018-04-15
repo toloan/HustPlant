@@ -13,10 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created by bach0 on 4/12/2018.
- */
-
+/** Created by bach0 on 4/12/2018. */
 public class PathFinder {
     int[][] mMap;
     int mWidth;
@@ -59,10 +56,12 @@ public class PathFinder {
             openSet.remove(current);
             closedSet.add(current);
 
-            for (int i = Math.max(0, current.x - 1); i <= Math.min(mWidth - 1, current.x + 1);
-                 i++) {
-                for (int j = Math.max(0, current.y - 1); j <= Math.min(mHeight - 1, current.y + 1);
-                     j++) {
+            for (int i = Math.max(0, current.x - 1);
+                    i <= Math.min(mWidth - 1, current.x + 1);
+                    i++) {
+                for (int j = Math.max(0, current.y - 1);
+                        j <= Math.min(mHeight - 1, current.y + 1);
+                        j++) {
                     if (i == current.x && j == current.y) {
                         continue;
                     }
@@ -81,14 +80,13 @@ public class PathFinder {
                     tentativeGScore += distance(current, neighbor) + bonus;
                     Float neighborGScore = gScore.get(neighbor);
                     if (neighborGScore != null) {
-                        if (tentativeGScore >= neighborGScore)
-                            continue;
+                        if (tentativeGScore >= neighborGScore) continue;
                     }
                     cameFrom.put(neighbor, current);
                     gScore.put(neighbor, tentativeGScore);
                     if (!closedSet.contains(neighbor))
-                        fScore.insertOrUpdate(tentativeGScore + distance(neighbor, end) + bonus,
-                                neighbor);
+                        fScore.insertOrUpdate(
+                                tentativeGScore + distance(neighbor, end) + bonus, neighbor);
                 }
             }
         }

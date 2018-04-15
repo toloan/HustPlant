@@ -9,10 +9,7 @@ import com.example.bach0.hustplant.database.entity.Person;
 
 import java.util.List;
 
-/**
- * Created by bach0 on 4/15/2018.
- */
-
+/** Created by bach0 on 4/15/2018. */
 @Dao
 public interface PersonDao {
     @Query("SELECT * FROM person")

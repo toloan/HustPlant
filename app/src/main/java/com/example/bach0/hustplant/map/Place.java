@@ -14,10 +14,7 @@ import android.view.View;
 
 import com.example.bach0.hustplant.R;
 
-/**
- * Created by bach0 on 4/12/2018.
- */
-
+/** Created by bach0 on 4/12/2018. */
 public class Place extends View {
     static final float ICON_SIZE = 0.2f;
     Drawable mFrame;
@@ -64,8 +61,11 @@ public class Place extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         mContentRect.set(0, 0, w, h);
-        mIconRect.set((int) (w * (0.5f - ICON_SIZE)), (int) (h * (0.3125f - ICON_SIZE)),
-                (int) (w * (0.5f + ICON_SIZE)), (int) (h * (0.3125f + ICON_SIZE)));
+        mIconRect.set(
+                (int) (w * (0.5f - ICON_SIZE)),
+                (int) (h * (0.3125f - ICON_SIZE)),
+                (int) (w * (0.5f + ICON_SIZE)),
+                (int) (h * (0.3125f + ICON_SIZE)));
     }
 
     public void setPosition(int x, int y) {

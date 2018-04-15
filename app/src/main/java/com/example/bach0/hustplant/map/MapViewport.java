@@ -16,19 +16,13 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.OverScroller;
 
-import static android.content.ContentValues.TAG;
-
-/**
- * Created by bach0 on 4/12/2018.
- */
-
+/** Created by bach0 on 4/12/2018. */
 public class MapViewport extends View {
     Paint paint = new Paint();
     private ScaleGestureDetector mScaleGestureDetector;
@@ -38,79 +32,86 @@ public class MapViewport extends View {
     private RectF mCurrentViewport = new RectF(0, 0, 200, 200);
     private Rect mContentRect = new Rect();
     private Listener mListener;
-    private final ScaleGestureDetector.OnScaleGestureListener mScaleGestureListener
-            = new ScaleGestureDetector.SimpleOnScaleGestureListener() {
-        /**
-         * This is the active focal point in terms of the viewport. Could be a local
-         * variable but kept here to minimize per-frame allocations.
-         */
-        private PointF viewportFocus = new PointF();
-        private float lastSpan;
+    private final ScaleGestureDetector.OnScaleGestureListener mScaleGestureListener =
+            new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                /**
+                 * This is the active focal point in terms of the viewport. Could be a local
+                 * variable but kept here to minimize per-frame allocations.
+                 */
+                private PointF viewportFocus = new PointF();
 
-        @Override
-        public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
-            lastSpan = scaleGestureDetector.getCurrentSpan();
-            return true;
-        }
+                private float lastSpan;
 
-        @Override
-        public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
-            float span = scaleGestureDetector.getCurrentSpan();
+                @Override
+                public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
+                    lastSpan = scaleGestureDetector.getCurrentSpan();
+                    return true;
+                }
 
-            float newWidth = lastSpan / span * mCurrentViewport.width();
-            float newHeight = lastSpan / span * mCurrentViewport.height();
+                @Override
+                public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
+                    float span = scaleGestureDetector.getCurrentSpan();
 
-            float focusX = scaleGestureDetector.getFocusX();
-            float focusY = scaleGestureDetector.getFocusY();
-            focusY = mContentRect.bottom - (focusY -mContentRect.top) + mContentRect.top;
-            hitTest(focusX, focusY, viewportFocus);
+                    float newWidth = lastSpan / span * mCurrentViewport.width();
+                    float newHeight = lastSpan / span * mCurrentViewport.height();
 
-            mCurrentViewport.set(
-                    viewportFocus.x
-                            - newWidth * (focusX - mContentRect.left)
-                            / mContentRect.width(),
-                    viewportFocus.y
-                            - newHeight * (mContentRect.bottom - focusY)
-                            / mContentRect.height(),
-                    0,
-                    0);
-            mCurrentViewport.right = mCurrentViewport.left + newWidth;
-            mCurrentViewport.bottom = mCurrentViewport.top + newHeight;
-            constrainViewport();
-            ViewCompat.postInvalidateOnAnimation(MapViewport.this);
-            lastSpan = span;
-            return true;
-        }
-    };
+                    float focusX = scaleGestureDetector.getFocusX();
+                    float focusY = scaleGestureDetector.getFocusY();
+                    focusY = mContentRect.bottom - (focusY - mContentRect.top) + mContentRect.top;
+                    hitTest(focusX, focusY, viewportFocus);
+
+                    mCurrentViewport.set(
+                            viewportFocus.x
+                                    - newWidth
+                                            * (focusX - mContentRect.left)
+                                            / mContentRect.width(),
+                            viewportFocus.y
+                                    - newHeight
+                                            * (mContentRect.bottom - focusY)
+                                            / mContentRect.height(),
+                            0,
+                            0);
+                    mCurrentViewport.right = mCurrentViewport.left + newWidth;
+                    mCurrentViewport.bottom = mCurrentViewport.top + newHeight;
+                    constrainViewport();
+                    ViewCompat.postInvalidateOnAnimation(MapViewport.this);
+                    lastSpan = span;
+                    return true;
+                }
+            };
     private Point mSurfaceSizeBuffer = new Point();
     private RectF mScrollerStartViewport = new RectF();
-    private final GestureDetector.SimpleOnGestureListener mGestureListener
-            = new GestureDetector.SimpleOnGestureListener() {
-        @Override
-        public boolean onDown(MotionEvent e) {
-            mScrollerStartViewport.set(mCurrentViewport);
-            mScroller.forceFinished(true);
-            ViewCompat.postInvalidateOnAnimation(MapViewport.this);
-            return true;
-        }
+    private final GestureDetector.SimpleOnGestureListener mGestureListener =
+            new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onDown(MotionEvent e) {
+                    mScrollerStartViewport.set(mCurrentViewport);
+                    mScroller.forceFinished(true);
+                    ViewCompat.postInvalidateOnAnimation(MapViewport.this);
+                    return true;
+                }
 
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            float viewportOffsetX = distanceX * mCurrentViewport.width() / mContentRect.width();
-            float viewportOffsetY = distanceY * mCurrentViewport.height() / mContentRect.height();
-            computeScrollSurfaceSize(mSurfaceSizeBuffer);
-            setViewportBottomLeft(
-                    mCurrentViewport.left + viewportOffsetX,
-                    mCurrentViewport.bottom + viewportOffsetY);
-            return true;
-        }
+                @Override
+                public boolean onScroll(
+                        MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+                    float viewportOffsetX =
+                            distanceX * mCurrentViewport.width() / mContentRect.width();
+                    float viewportOffsetY =
+                            distanceY * mCurrentViewport.height() / mContentRect.height();
+                    computeScrollSurfaceSize(mSurfaceSizeBuffer);
+                    setViewportBottomLeft(
+                            mCurrentViewport.left + viewportOffsetX,
+                            mCurrentViewport.bottom + viewportOffsetY);
+                    return true;
+                }
 
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            fling((int) -velocityX, (int) velocityY);
-            return true;
-        }
-    };
+                @Override
+                public boolean onFling(
+                        MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                    fling((int) -velocityX, (int) velocityY);
+                    return true;
+                }
+            };
 
     public MapViewport(Context context) {
         super(context);
@@ -126,9 +127,8 @@ public class MapViewport extends View {
         TypedArray a = context.obtainStyledAttributes(attrs, attrIDs);
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;
-        mMap = BitmapFactory.decodeResource(context.getResources(), a.getResourceId(0, 0),options);
-        mCurrentViewport.set(0, 0, mMap.getWidth(), mMap
-                .getHeight());
+        mMap = BitmapFactory.decodeResource(context.getResources(), a.getResourceId(0, 0), options);
+        mCurrentViewport.set(0, 0, mMap.getWidth(), mMap.getHeight());
         a.recycle();
         mScaleGestureDetector = new ScaleGestureDetector(context, mScaleGestureListener);
         mGestureDetector = new GestureDetector(context, mGestureListener);
@@ -155,9 +155,9 @@ public class MapViewport extends View {
         super.onDraw(canvas);
         Matrix cropMatrix = new Matrix();
         cropMatrix.postTranslate(-mCurrentViewport.left, -mCurrentViewport.top);
-        cropMatrix.postScale((float) mContentRect.width() / mCurrentViewport.width(),
-                mContentRect.height() / mCurrentViewport
-                        .height());
+        cropMatrix.postScale(
+                (float) mContentRect.width() / mCurrentViewport.width(),
+                mContentRect.height() / mCurrentViewport.height());
 
         canvas.drawBitmap(mMap, cropMatrix, paint);
     }
@@ -176,21 +176,25 @@ public class MapViewport extends View {
 
         dest.set(
                 mCurrentViewport.left
-                        + mCurrentViewport.width()
-                        * (x - mContentRect.left) / mContentRect.width(),
+                        + mCurrentViewport.width() * (x - mContentRect.left) / mContentRect.width(),
                 mCurrentViewport.top
                         + mCurrentViewport.height()
-                        * (y - mContentRect.bottom) / -mContentRect.height());
+                                * (y - mContentRect.bottom)
+                                / -mContentRect.height());
         return true;
     }
 
     private void constrainViewport() {
         mCurrentViewport.left = Math.max(0, mCurrentViewport.left);
         mCurrentViewport.top = Math.max(0, mCurrentViewport.top);
-        mCurrentViewport.bottom = Math.max(Math.nextUp(mCurrentViewport.top),
-                Math.min(mMap.getHeight(), mCurrentViewport.bottom));
-        mCurrentViewport.right = Math.max(Math.nextUp(mCurrentViewport.left),
-                Math.min(mMap.getWidth(), mCurrentViewport.right));
+        mCurrentViewport.bottom =
+                Math.max(
+                        Math.nextUp(mCurrentViewport.top),
+                        Math.min(mMap.getHeight(), mCurrentViewport.bottom));
+        mCurrentViewport.right =
+                Math.max(
+                        Math.nextUp(mCurrentViewport.left),
+                        Math.min(mMap.getWidth(), mCurrentViewport.right));
         float ratio = (float) mContentRect.width() / mContentRect.height();
         if (ratio > 1) {
             mCurrentViewport.bottom = mCurrentViewport.top + mCurrentViewport.width() / ratio;
@@ -204,19 +208,26 @@ public class MapViewport extends View {
         // Flings use math in pixels (as opposed to math based on the viewport).
         computeScrollSurfaceSize(mSurfaceSizeBuffer);
         mScrollerStartViewport.set(mCurrentViewport);
-        int startX = (int) (mSurfaceSizeBuffer.x * (mScrollerStartViewport.left - 0) / (
-                mMap.getWidth()));
-        int startY = (int) (mSurfaceSizeBuffer.y * (mMap.getHeight() -
-                mScrollerStartViewport.bottom) / (
-                mMap.getHeight()));
+        int startX =
+                (int)
+                        (mSurfaceSizeBuffer.x
+                                * (mScrollerStartViewport.left - 0)
+                                / (mMap.getWidth()));
+        int startY =
+                (int)
+                        (mSurfaceSizeBuffer.y
+                                * (mMap.getHeight() - mScrollerStartViewport.bottom)
+                                / (mMap.getHeight()));
         mScroller.forceFinished(true);
         mScroller.fling(
                 startX,
                 startY,
                 velocityX,
                 velocityY,
-                0, mSurfaceSizeBuffer.x - mContentRect.width(),
-                0, mSurfaceSizeBuffer.y - mContentRect.height(),
+                0,
+                mSurfaceSizeBuffer.x - mContentRect.width(),
+                0,
+                mSurfaceSizeBuffer.y - mContentRect.height(),
                 mContentRect.width() / 2,
                 mContentRect.height() / 2);
         ViewCompat.postInvalidateOnAnimation(this);
@@ -224,10 +235,8 @@ public class MapViewport extends View {
 
     private void computeScrollSurfaceSize(Point out) {
         out.set(
-                (int) (mContentRect.width() * (mMap.getWidth())
-                        / mCurrentViewport.width()),
-                (int) (mContentRect.height() * (mMap.getHeight())
-                        / mCurrentViewport.height()));
+                (int) (mContentRect.width() * (mMap.getWidth()) / mCurrentViewport.width()),
+                (int) (mContentRect.height() * (mMap.getHeight()) / mCurrentViewport.height()));
     }
 
     @Override
@@ -242,11 +251,8 @@ public class MapViewport extends View {
             int currX = mScroller.getCurrX();
             int currY = mScroller.getCurrY();
 
-            float currXRange = (mMap.getWidth())
-                    * currX / mSurfaceSizeBuffer.x;
-            float currYRange = mMap.getHeight() - (mMap
-                    .getHeight())
-                    * currY / mSurfaceSizeBuffer.y;
+            float currXRange = (mMap.getWidth()) * currX / mSurfaceSizeBuffer.x;
+            float currYRange = mMap.getHeight() - (mMap.getHeight()) * currY / mSurfaceSizeBuffer.y;
             setViewportBottomLeft(currXRange, currYRange);
         }
     }
@@ -262,9 +268,7 @@ public class MapViewport extends View {
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
-    /**
-     * Returns the current viewport (visible extremes for the chart domain and range.)
-     */
+    /** Returns the current viewport (visible extremes for the chart domain and range.) */
     public RectF getCurrentViewport() {
         return new RectF(mCurrentViewport);
     }
@@ -291,8 +295,9 @@ public class MapViewport extends View {
     }
 
     public Point mapToViewport(int x, int y) {
-        return new Point((int) ((x - (int) mCurrentViewport.left) * getScaleFactor()), (int) ((y - (int)
-                        mCurrentViewport.top) * getScaleFactor()));
+        return new Point(
+                (int) ((x - (int) mCurrentViewport.left) * getScaleFactor()),
+                (int) ((y - (int) mCurrentViewport.top) * getScaleFactor()));
     }
 
     public float getScaleFactor() {
@@ -324,21 +329,20 @@ public class MapViewport extends View {
         void onViewportChanged(RectF viewport);
     }
 
-    /**
-     * Persistent state that is saved by InteractiveLineGraphView.
-     */
+    /** Persistent state that is saved by InteractiveLineGraphView. */
     public static class SavedState extends BaseSavedState {
-        public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
-            @Override
-            public SavedState createFromParcel(Parcel parcel) {
-                return new SavedState(parcel);
-            }
+        public static final Creator<SavedState> CREATOR =
+                new Creator<SavedState>() {
+                    @Override
+                    public SavedState createFromParcel(Parcel parcel) {
+                        return new SavedState(parcel);
+                    }
 
-            @Override
-            public SavedState[] newArray(int i) {
-                return new SavedState[i];
-            }
-        };
+                    @Override
+                    public SavedState[] newArray(int i) {
+                        return new SavedState[i];
+                    }
+                };
         private RectF viewport;
 
         public SavedState(Parcelable superState) {
@@ -363,7 +367,9 @@ public class MapViewport extends View {
         public String toString() {
             return "InteractiveLineGraphView.SavedState{"
                     + Integer.toHexString(System.identityHashCode(this))
-                    + " viewport=" + viewport.toString() + "}";
+                    + " viewport="
+                    + viewport.toString()
+                    + "}";
         }
     }
 }

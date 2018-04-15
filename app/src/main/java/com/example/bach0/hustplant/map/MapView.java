@@ -16,10 +16,7 @@ import com.example.bach0.hustplant.R;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by bach0 on 4/13/2018.
- */
-
+/** Created by bach0 on 4/13/2018. */
 public class MapView extends ViewGroup implements MapViewport.Listener {
     MapViewport mViewport;
     List<Place> mPlaceList = new ArrayList<>();
@@ -39,26 +36,35 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
         LayoutInflater.from(context).inflate(R.layout.map_content, this, true);
         mViewport = findViewById(R.id.map_viewport);
         mViewport.setListener(this);
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inScaled = false;
-                Bitmap routeBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable
-                        .ic_route, options);
-                int[] routePixels = new int[routeBitmap.getWidth() * routeBitmap.getHeight()];
-                routeBitmap.getPixels(routePixels, 0, routeBitmap.getWidth(), 0, 0, routeBitmap
-                        .getWidth(), routeBitmap.getHeight());
-                int[][] routeData = new int[routeBitmap.getHeight()][routeBitmap.getWidth()];
-                for (int i = 0; i < routeBitmap.getWidth(); i++) {
-                    for (int j = 0; j < routeBitmap.getHeight(); j++) {
-                        routeData[j][i] = routePixels[j * routeBitmap.getWidth() + i];
+        AsyncTask.execute(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inScaled = false;
+                        Bitmap routeBitmap =
+                                BitmapFactory.decodeResource(
+                                        context.getResources(), R.drawable.ic_route, options);
+                        int[] routePixels =
+                                new int[routeBitmap.getWidth() * routeBitmap.getHeight()];
+                        routeBitmap.getPixels(
+                                routePixels,
+                                0,
+                                routeBitmap.getWidth(),
+                                0,
+                                0,
+                                routeBitmap.getWidth(),
+                                routeBitmap.getHeight());
+                        int[][] routeData =
+                                new int[routeBitmap.getHeight()][routeBitmap.getWidth()];
+                        for (int i = 0; i < routeBitmap.getWidth(); i++) {
+                            for (int j = 0; j < routeBitmap.getHeight(); j++) {
+                                routeData[j][i] = routePixels[j * routeBitmap.getWidth() + i];
+                            }
+                        }
+                        mPathFinder = new PathFinder(routeData);
                     }
-                }
-                mPathFinder = new PathFinder(routeData);
-            }
-        });
-
+                });
     }
 
     @Override
@@ -78,14 +84,14 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
-//        Paint paint = new Paint();
-//        paint.setColor(Color.BLUE);
-//        paint.setStyle(Paint.Style.FILL);
-//        paint.setStrokeWidth(20);
-//        for (Point p : mPath) {
-//            Point viewport = mViewport.mapToViewport(p.x*2, p.y*2);
-//            canvas.drawPoint(viewport.x, viewport.y, paint);
-//        }
+        //        Paint paint = new Paint();
+        //        paint.setColor(Color.BLUE);
+        //        paint.setStyle(Paint.Style.FILL);
+        //        paint.setStrokeWidth(20);
+        //        for (Point p : mPath) {
+        //            Point viewport = mViewport.mapToViewport(p.x*2, p.y*2);
+        //            canvas.drawPoint(viewport.x, viewport.y, paint);
+        //        }
     }
 
     @Override
