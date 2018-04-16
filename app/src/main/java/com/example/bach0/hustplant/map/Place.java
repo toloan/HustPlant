@@ -19,10 +19,33 @@ public class Place extends View {
     static final float ICON_SIZE = 0.2f;
     Drawable mFrame;
     Drawable mBackground;
+
+    public Drawable getIcon() {
+        return mIcon;
+    }
+
     Drawable mIcon;
     Rect mContentRect = new Rect();
     Rect mIconRect = new Rect();
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    int id;
+
+    public Point getPosition() {
+        return position;
+    }
+
     Point position = new Point();
+    int type;
     int mColor = Color.BLACK;
 
     public Place(Context context) {
@@ -37,6 +60,14 @@ public class Place extends View {
         super(context, attrs, defStyleAttr);
         mFrame = ContextCompat.getDrawable(context, R.drawable.ic_place).mutate();
         mBackground = ContextCompat.getDrawable(context, R.drawable.ic_place_background);
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     public void setColor(int color) {
@@ -74,5 +105,12 @@ public class Place extends View {
 
     public void setIcon(int resource) {
         mIcon = ContextCompat.getDrawable(getContext(), resource);
+    }
+
+    public float distance(Point point) {
+        return (float)
+                Math.sqrt(
+                        (point.x - position.x) * (point.x - position.x)
+                                + (point.y - position.y) * (point.y - position.y));
     }
 }

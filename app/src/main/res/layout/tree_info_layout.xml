@@ -3,8 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/tree_info_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="350dp"
+    android:background="@color/white"
+    android:orientation="vertical"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="72dp"
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,6 +24,7 @@
             android:orientation="horizontal">
 
             <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/tree_image"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginRight="8dp"
@@ -32,23 +37,26 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/tree_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Title" />
 
                 <TextView
+                    android:id="@+id/tree_subtitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Subitle" />
+                    android:text="Subtitle" />
             </LinearLayout>
 
         </LinearLayout>
 
-        <ScrollView
+        <com.example.bach0.hustplant.TreeInfoScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="8dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -56,35 +64,37 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/status_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Status: Healthy"
-                    android:layout_marginBottom="8dp"/>
+                    android:layout_marginBottom="8dp"
+                    android:text="Status: Healthy" />
 
                 <com.jjoe64.graphview.helper.GraphViewXML
+                    android:id="@+id/graph_view"
                     android:layout_width="wrap_content"
-                    android:layout_height="200dp"
-                    app:seriesColor="#ee0000"
-                    app:seriesData="0=5;2=5;3=0;4=2"
+                    android:layout_height="150dp"
+                    android:layout_marginBottom="8dp"
                     android:title="Water level"
-                    app:seriesType="line"
-                    android:layout_marginBottom="8dp"/>
+                    app:seriesColor="#ee0000"
+                    app:seriesData="0=0.4;2=0.5;3=0.1;4=0.2"
+                    app:seriesType="line" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Water History:"
-                    android:layout_marginBottom="8dp"/>
-                <android.support.v4.widget.NestedScrollView
+                    android:layout_marginBottom="8dp"
+                    android:text="Water History:" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/water_history"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp">
-                    <android.support.v7.widget.RecyclerView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
-                </android.support.v4.widget.NestedScrollView>
+                    android:layout_height="wrap_content"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
             </LinearLayout>
 
 
-        </ScrollView>
+        </com.example.bach0.hustplant.TreeInfoScrollView>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -92,6 +102,7 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/water_now_btn"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -99,6 +110,7 @@
                 android:text="Water now" />
 
             <Button
+                android:id="@+id/customize_btn"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

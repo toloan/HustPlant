@@ -18,6 +18,9 @@ public interface PlantDao {
     @Query("SELECT * FROM plant WHERE id IN (:plantIds)")
     List<Plant> loadAllByIds(int[] plantIds);
 
+    @Query("SELECT * FROM plant WHERE id = :plantId LIMIT 1")
+    Plant loadById(int plantId);
+
     @Query("SELECT * FROM plant WHERE name LIKE :name")
     List<Plant> findByName(String name);
 

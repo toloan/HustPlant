@@ -9,6 +9,7 @@ import com.example.bach0.hustplant.App;
 import com.example.bach0.hustplant.R;
 import com.example.bach0.hustplant.database.entity.Person;
 import com.example.bach0.hustplant.database.entity.Plant;
+import com.example.bach0.hustplant.database.entity.Water;
 import com.example.bach0.hustplant.database.entity.WaterHistory;
 
 import java.util.Date;
@@ -85,6 +86,12 @@ public class Initializer extends Callback {
                                 WaterHistoryDao waterHistoryDao =
                                         App.get().getDatabase().waterHistoryDao();
                                 waterHistoryDao.insertAll(waterHistories);
+                                Water[] waters = {
+                                    new Water(1, new Point(114, 345)),
+                                    new Water(2, new Point(229, 466)),
+                                };
+                                WaterDao waterDao = App.get().getDatabase().waterDao();
+                                waterDao.insertAll(waters);
                             }
                         });
     }

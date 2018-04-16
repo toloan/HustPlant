@@ -5,9 +5,10 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,16 +19,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 
 import com.example.bach0.hustplant.Setting.Setting;
 import com.example.bach0.hustplant.database.PlantDao;
 import com.example.bach0.hustplant.database.entity.Plant;
+import com.example.bach0.hustplant.database.entity.Water;
 import com.example.bach0.hustplant.map.MapView;
 import com.example.bach0.hustplant.map.Place;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private MapView mMapView;
+    private TreeInfoView treeInfoView;
+    private CustomizeView customizeView;
 
     private static int blendColors(int color1, int color2, float ratio) {
         final float inverseRation = 1f - ratio;
@@ -37,31 +45,88 @@ public class MainActivity extends AppCompatActivity
         return Color.rgb((int) r, (int) g, (int) b);
     }
 
+    private void addAllWaters() {
+        for (final Water water : App.get().getDatabase().waterDao().getAll()) {
+            new Handler(App.get().getMainLooper())
+                    .post(
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    final Place place =
+                                            mMapView.addPlace(
+                                                    water.getPosition().x,
+                                                    water.getPosition().y,
+                                                    R.drawable.ic_menu_manage);
+                                    place.setId(water.getId());
+                                    place.setType(2);
+                                    place.setColor(Color.BLUE);
+                                    place.setOnClickListener(
+                                            new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    if (customizeView.sheetBehavior.getState()
+                                                            == BottomSheetBehavior
+                                                                    .STATE_COLLAPSED) {
+                                                        customizeView.addPlace(place);
+                                                        customizeView.show();
+                                                    }
+                                                }
+                                            });
+                                }
+                            });
+        }
+    }
+
     private void addAllPlants() {
         for (final Plant plant : App.get().getDatabase().plantDao().getAll()) {
-            final Place place =
-                    mMapView.addPlace(
-                            plant.getPosition().x, plant.getPosition().y, plant.getResourceId());
-            place.setColor(
-                    blendColors(
-                            Color.RED,
-                            Color.GREEN,
-                            plant.getWaterLevel() / plant.getTargetWaterLevel()));
-            place.setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Snackbar.make(
-                                            view,
-                                            "You are clicking on " + plant.getName(),
-                                            Snackbar.LENGTH_LONG)
-                                    .show();
-                            Animation anim =
-                                    AnimationUtils.loadAnimation(
-                                            MainActivity.this, R.anim.test2_anim);
-                            place.startAnimation(anim);
-                        }
-                    });
+            new Handler(App.get().getMainLooper())
+                    .post(
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    final Place place =
+                                            mMapView.addPlace(
+                                                    plant.getPosition().x,
+                                                    plant.getPosition().y,
+                                                    plant.getResourceId());
+                                    place.setType(1);
+                                    place.setId(plant.getId());
+                                    place.setColor(
+                                            blendColors(
+                                                    Color.GREEN,
+                                                    Color.RED,
+                                                    plant.getWaterLevel()
+                                                            / plant.getTargetWaterLevel()));
+                                    place.setOnClickListener(
+                                            new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    Animation anim =
+                                                            AnimationUtils.loadAnimation(
+                                                                    MainActivity.this,
+                                                                    R.anim.test2_anim);
+                                                    place.startAnimation(anim);
+                                                    if (customizeView.sheetBehavior.getState()
+                                                            != BottomSheetBehavior
+                                                                    .STATE_COLLAPSED) {
+
+                                                        treeInfoView.setTree(plant);
+                                                        treeInfoView.show();
+                                                        customizeView.hide();
+                                                        List<Place> places = new ArrayList<>();
+                                                        places.add(
+                                                                mMapView.findNearest(
+                                                                        plant.getPosition(), 2));
+                                                        places.add(place);
+                                                        customizeView.setPlaceList(places);
+                                                    } else {
+                                                        customizeView.addPlace(place);
+                                                        customizeView.show();
+                                                    }
+                                                }
+                                            });
+                                }
+                            });
         }
     }
 
@@ -77,9 +142,7 @@ public class MainActivity extends AppCompatActivity
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null)
-                                .show();
+                        treeInfoView.show();
                     }
                 });
 
@@ -97,12 +160,40 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         mMapView = findViewById(R.id.map_view);
-        final PlantDao plantDao = App.get().getDatabase().plantDao();
+        treeInfoView = new TreeInfoView(findViewById(R.id.tree_info_layout));
+        customizeView =
+                new CustomizeView(findViewById(R.id.customize_layout), mMapView.getCurrentPlace());
         AsyncTask.execute(
                 new Runnable() {
                     @Override
                     public void run() {
                         addAllPlants();
+                        addAllWaters();
+                        new Handler(App.get().getMainLooper())
+                                .post(
+                                        new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                mMapView.update();
+                                            }
+                                        });
+                    }
+                });
+        final Button customizeBtn = findViewById(R.id.customize_btn);
+        customizeBtn.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        treeInfoView.hide();
+                        customizeView.show();
+                    }
+                });
+        Button addDestinationBtn = findViewById(R.id.add_destination_btn);
+        addDestinationBtn.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        customizeView.sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     }
                 });
         navigationView.setCheckedItem(R.id.map);

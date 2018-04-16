@@ -17,12 +17,16 @@ import java.util.Date;
 public class WaterHistory {
     @PrimaryKey(autoGenerate = true)
     private int id;
+
     @ColumnInfo(name = "person_id")
     private int personId;
+
     @ColumnInfo(name = "plant_id")
     private int plantId;
+
     @ColumnInfo(name = "water_amount")
     private float waterAmount;
+
     @ColumnInfo(name = "date")
     private Date date;
 

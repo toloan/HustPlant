@@ -36,6 +36,7 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
         LayoutInflater.from(context).inflate(R.layout.map_content, this, true);
         mViewport = findViewById(R.id.map_viewport);
         mViewport.setListener(this);
+        addPlace(500, 500, R.drawable.ic_menu_slideshow);
         AsyncTask.execute(
                 new Runnable() {
                     @Override
@@ -96,6 +97,10 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
 
     @Override
     public void onViewportChanged(RectF viewport) {
+        update();
+    }
+
+    public void update() {
         for (Place place : mPlaceList) {
             int size = 60;
             Point topLeft = new Point(place.position.x - size / 2, place.position.y - size);
@@ -107,5 +112,25 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
             place.setLeft(topLeft.x);
             place.setRight(bottomRight.x);
         }
+    }
+
+    public Place findNearest(Point pos, int type) {
+        Place p = null;
+        float distance = Float.MAX_VALUE;
+        for (Place place : mPlaceList) {
+            if (place.getType() == type && place.distance(pos) < distance) {
+                p = place;
+                distance = place.distance(pos);
+            }
+        }
+        return p;
+    }
+
+    public Place getCurrentPlace() {
+        return mPlaceList.get(0);
+    }
+
+    public void setCurrentPlace(Point p) {
+        mPlaceList.get(0).setPosition(p.x, p.y);
     }
 }

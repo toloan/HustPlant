@@ -21,7 +21,7 @@ public interface WaterHistoryDao {
     @Query("SELECT * FROM water_history WHERE person_id = :personId")
     List<WaterHistory> findByPerson(int personId);
 
-    @Query("SELECT * FROM water_history WHERE person_id = :plantId")
+    @Query("SELECT * FROM water_history WHERE plant_id = :plantId")
     List<WaterHistory> findByPlant(int plantId);
 
     @Insert
