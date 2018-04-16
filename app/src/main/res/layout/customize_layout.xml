@@ -21,8 +21,11 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginRight="8dp"
-            android:src="@drawable/ic_menu_camera"
-            app:civ_circle_background_color="@color/colorAccent" />
+            android:src="@drawable/ic_directions_run_black_24dp"
+            app:civ_circle_background_color="@color/colorAccent"
+            app:civ_border_width="4dp"
+            app:civ_border_color="@color/colorAccent"
+            android:layout_gravity="center_vertical"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -47,21 +50,22 @@
 
     <com.example.bach0.hustplant.TreeInfoScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <include layout="@layout/destination_layout" />
-    </com.example.bach0.hustplant.TreeInfoScrollView>
-
-
-    <com.example.bach0.hustplant.TreeInfoScrollView
-        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/destination_list"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include layout="@layout/destination_layout" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/destination_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
     </com.example.bach0.hustplant.TreeInfoScrollView>
 
 

@@ -198,6 +198,17 @@ public class MainActivity extends AppCompatActivity
                 });
         navigationView.setCheckedItem(R.id.map);
 
+        View.OnClickListener waterNowClickListener =
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mMapView.showDirection(customizeView.getPlaceList());
+                        customizeView.hide();
+                        treeInfoView.hide();
+                    }
+                };
+        findViewById(R.id.water_now_btn).setOnClickListener(waterNowClickListener);
+        findViewById(R.id.customize_water_now_btn).setOnClickListener(waterNowClickListener);
     }
 
     @Override

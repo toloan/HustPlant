@@ -17,8 +17,10 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginRight="8dp"
-            android:src="@drawable/ic_menu_camera"
-            app:civ_circle_background_color="@color/colorAccent" />
+            android:src="@drawable/ic_place_black_24dp"
+            app:civ_border_color="#ffaaaaaa"
+            app:civ_border_width="8dp"
+            app:civ_circle_background_color="#ffaaaaaa" />
 
         <TextView
             android:id="@+id/destination_name"
@@ -32,13 +34,13 @@
         android:id="@+id/distance_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent">
+        android:background="#ffaaaaaa">
 
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginLeft="22dp"
-            android:src="@drawable/ic_menu_camera" />
+            android:src="@drawable/ic_keyboard_arrow_down_black_24dp" />
 
         <TextView
             android:id="@+id/distance"

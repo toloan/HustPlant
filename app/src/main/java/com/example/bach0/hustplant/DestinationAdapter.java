@@ -19,24 +19,37 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-/** Created by bach0 on 4/16/2018. */
+/**
+ * Created by bach0 on 4/16/2018.
+ */
 public class DestinationAdapter extends GestureAdapter<Place, DestinationAdapter.ViewHolder>
         implements GestureAdapter.OnDataChangeListener<Place> {
     TextView distance;
     View view;
     Place current;
+    TextView total;
 
-    public DestinationAdapter(TextView distance, View view, Place current) {
+    public DestinationAdapter(TextView distance, View view, TextView total, Place current) {
         setDataChangeListener(this);
         this.distance = distance;
         this.view = view;
         this.current = current;
+        this.total = total;
     }
 
     @Override
     public void setData(List<Place> data) {
         super.setData(data);
-        distance.setText("" + current.distance(getItem(0).getPosition()) + "m");
+        distance.setText(String.format("%.1fm", current.distance(getItem(0).getPosition())));
+        updateTotal();
+    }
+
+    void updateTotal() {
+        float total = 0;
+        for (int i = 0; i < getData().size() - 1; i++) {
+            total += getData().get(i).distance(getData().get(i + 1).getPosition());
+        }
+        this.total.setText(String.format("%.1fm", total));
     }
 
     @Override
@@ -46,6 +59,7 @@ public class DestinationAdapter extends GestureAdapter<Place, DestinationAdapter
             distance.setText("" + current.distance(getItem(0).getPosition()) + "m");
         }
         notifyItemChanged(getItemCount() - 2);
+        updateTotal();
         return result;
     }
 
@@ -66,7 +80,7 @@ public class DestinationAdapter extends GestureAdapter<Place, DestinationAdapter
             @NonNull final DestinationAdapter.ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        distance.setText("" + current.distance(getItem(0).getPosition()) + "m");
+        distance.setText(String.format("%.1fm", current.distance(getItem(0).getPosition())));
         final ViewHolder vh = holder;
         final Place current = getData().get(position);
         if (position == getItemCount() - 1) {
@@ -74,7 +88,7 @@ public class DestinationAdapter extends GestureAdapter<Place, DestinationAdapter
         } else {
             holder.mDistanceView.setVisibility(View.VISIBLE);
             Place next = getData().get(position + 1);
-            holder.mDistance.setText("" + current.distance(next.getPosition()) + "m");
+            holder.mDistance.setText(String.format("%.1fm", current.distance(next.getPosition())));
         }
         holder.mIcon.setImageDrawable(current.getIcon());
         AsyncTask.execute(

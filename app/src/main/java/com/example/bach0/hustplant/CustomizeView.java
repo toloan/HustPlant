@@ -22,8 +22,14 @@ public class CustomizeView {
     TextView statusView;
     DestinationAdapter mAdapter;
     CircleImageView imageView;
+
     public CustomizeView(View view, Place current) {
-        mAdapter  = new DestinationAdapter((TextView) view.findViewById(R.id.distance),view.findViewById(R.id.distance_view),current);
+        mAdapter =
+                new DestinationAdapter(
+                        (TextView) view.findViewById(R.id.distance),
+                        view.findViewById(R.id.distance_view),
+                        (TextView) view.findViewById(R.id.total_distance),
+                        current);
         sheetBehavior = BottomSheetBehavior.from(view);
         sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         sheetBehavior.setSkipCollapsed(true);
@@ -31,25 +37,28 @@ public class CustomizeView {
         RecyclerView rv = view.findViewById(R.id.destination_list);
         rv.setAdapter(mAdapter);
         rv.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        GestureManager gestureManager =
-                new GestureManager.Builder(rv)
-                        // Enable swipe
-                        .setSwipeEnabled(true)
-                        // Enable long press drag and drop
-                        .setLongPressDragEnabled(true)
-                        // Enable manual drag from the beginning, you need to provide View inside
-                        // your GestureViewHolder
-                        //                .setManualDragEnabled(true)
-                        // Use custom gesture flags
-                        // Do not use those methods if you want predefined flags for RecyclerView
-                        // layout manager
-                        .setSwipeFlags(ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT)
-                        .setDragFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN)
-                        .build();
+        new GestureManager.Builder(rv)
+                // Enable swipe
+                .setSwipeEnabled(true)
+                // Enable long press drag and drop
+                .setLongPressDragEnabled(true)
+                // Enable manual drag from the beginning, you need to provide View inside
+                // your GestureViewHolder
+                //                .setManualDragEnabled(true)
+                // Use custom gesture flags
+                // Do not use those methods if you want predefined flags for RecyclerView
+                // layout manager
+                .setSwipeFlags(ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT)
+                .setDragFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN)
+                .build();
     }
 
     void addPlace(Place place) {
         mAdapter.add(place);
+    }
+
+    List<Place> getPlaceList() {
+        return mAdapter.getData();
     }
 
     void setPlaceList(List<Place> places) {
