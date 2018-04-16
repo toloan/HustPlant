@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HustPlant</string>
+
+    <string name="navigation_drawer_open">Mở navigation drawer</string>
+    <string name="navigation_drawer_close">Đóng navigation drawer</string>
+
+    <string name="action_settings">Thiết lập</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="device">Thiết bị</string>
+    <string name="information">Thông tin</string>
+    <string name="support">Đóng góp ý kiến</string>
+    <string name="pref_sync_select_language">Chọn ngôn ngữ</string>
+    <string name="pref_sync_language">Ngôn ngữ</string>
+    <string name="about">About</string>
+    <string name="policy">Điều lệ</string>
+    <string name="policy_content">Đây là luật</string>
+    <string name="policy_header">Điều lệ</string>
+    <string name="write_review">Review</string>
+    <string name="review_content">ý kiến của bạn</string>
+    <string name="review">Review</string>
+</resources>

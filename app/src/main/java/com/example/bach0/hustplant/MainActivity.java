@@ -1,5 +1,7 @@
 package com.example.bach0.hustplant;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import com.example.bach0.hustplant.Setting.Setting;
 import com.example.bach0.hustplant.database.PlantDao;
 import com.example.bach0.hustplant.database.entity.Plant;
 import com.example.bach0.hustplant.map.MapView;
@@ -145,7 +148,8 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
-
+            Intent intent=new Intent(this, Setting.class);
+            startActivity(intent);
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
@@ -160,4 +164,5 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 }

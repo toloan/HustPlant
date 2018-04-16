@@ -2,6 +2,8 @@ package com.example.bach0.hustplant;
 
 import android.app.Application;
 import android.arch.persistence.room.Room;
+import android.content.Context;
+import android.content.res.Resources;
 
 import com.example.bach0.hustplant.database.AppDatabase;
 import com.example.bach0.hustplant.database.Initializer;
@@ -26,8 +28,13 @@ public class App extends Application {
                         .build();
         INSTANCE = this;
     }
-
     public AppDatabase getDatabase() {
         return mDatabase;
+    }
+
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(newBase);
     }
 }

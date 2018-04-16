@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/device">
+        <ListPreference
+            android:defaultValue="en"
+            android:dialogTitle="@string/pref_sync_select_language"
+            android:entries="@array/pref_sync_language_entries"
+            android:entryValues="@array/pref_sync_language_value"
+            android:icon="@drawable/language"
+            android:key="language"
+            android:summary="%s"
+            android:title="@string/pref_sync_language" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/information">
+        <PreferenceScreen
+            android:icon="@drawable/version"
+            android:key="version"
+            android:summary="1.0"
+            android:title="Version"></PreferenceScreen>
+
+        <Preference
+            android:icon="@drawable/pol"
+            android:title="@string/policy">
+            <intent
+                android:action="AboutAction"
+                android:data="policy"
+                android:targetClass="com.example.bach0.hustplant.Setting.About"
+                android:targetPackage="com.example.bach0.hustplant" />
+        </Preference>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/support">
+        <com.example.bach0.hustplant.Setting.ReviewDialog
+            android:dialogTitle="@string/review"
+            android:icon="@drawable/comment"
+            android:key="review"
+            android:title="@string/review" />
+
+    </PreferenceCategory>
+</PreferenceScreen>
