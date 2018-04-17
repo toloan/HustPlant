@@ -23,7 +23,9 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/** Created by bach0 on 4/13/2018. */
+/**
+ * Created by bach0 on 4/13/2018.
+ */
 public class MapView extends ViewGroup implements MapViewport.Listener {
     MapViewport mViewport;
     List<Place> mPlaceList = new ArrayList<>();
@@ -79,6 +81,39 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
                         mPathFinder = new PathFinder(routeData);
                     }
                 });
+        mTimer.scheduleAtFixedRate(
+                new TimerTask() {
+                    @Override
+                    public void run() {
+                        if (!showingDirection) return;
+                        List<Path> paths = new ArrayList<>();
+                        List<Point> p = new ArrayList<>();
+                        for (int i = 0; i < mDirection.size() - 1; i++) {
+                            Point start =
+                                    new Point(
+                                            mDirection.get(i).getPosition().x / 2,
+                                            mDirection.get(i).getPosition().y / 2);
+                            Point end =
+                                    new Point(
+                                            mDirection.get(i + 1).getPosition().x / 2,
+                                            mDirection.get(i + 1).getPosition().y / 2);
+
+                            List<Point> points = mPathFinder.findPath(start, end);
+                            p.addAll(points);
+                            Path path = new Path();
+                            path.moveTo(points.get(0).x * 2, points.get(0).y * 2);
+                            for (int j = 1; j < points.size(); j++) {
+                                path.lineTo(points.get(j).x * 2, points.get(j).y * 2);
+                            }
+                            paths.add(path);
+                        }
+                        mPath = paths;
+                        mPoints = p;
+                        postInvalidate();
+                    }
+                },
+                0,
+                1000);
     }
 
     @Override
@@ -101,17 +136,18 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
             for (Place place : mOther) {
                 place.setAlpha(0.3f);
             }
-            for (Place place :mDirection) {
+            for (Place place : mDirection) {
                 place.setAlpha(1f);
             }
         }
         super.dispatchDraw(canvas);
         if (showingDirection) {
-            mPaint.setColor(Color.BLUE);
-            Path circle = new Path();
             int circleSize = 6;
+            mPaint.setColor(Color.BLUE);
+            mPaint.setStrokeWidth(circleSize * mViewport.getScaleFactor());
+            Path circle = new Path();
             circle.addCircle(0, 0, circleSize * mViewport.getScaleFactor(), Path.Direction.CCW);
-            mPaint.setStyle(Paint.Style.STROKE);
+            mPaint.setStyle(Paint.Style.FILL);
             for (int i = 0; i < mPath.size(); i++) {
                 if (i == 0) {
                     mPaint.setAlpha(255);
@@ -187,45 +223,11 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
 
     public void showDirection(List<Place> places) {
         mDirection.clear();
+        mDirection.add(mPlaceList.get(0));
         mDirection.addAll(places);
-        mDirection.add(0, mPlaceList.get(0));
-        showingDirection = true;
         mOther.clear();
         mOther.addAll(mPlaceList);
         mOther.removeAll(mDirection);
-        mTimer.cancel();
-        mTimer = new Timer();
-        mTimer.scheduleAtFixedRate(
-                new TimerTask() {
-                    @Override
-                    public void run() {
-                        List<Path> paths = new ArrayList<>();
-                        List<Point> p = new ArrayList<>();
-                        for (int i = 0; i < mDirection.size() - 1; i++) {
-                            Point start =
-                                    new Point(
-                                            mDirection.get(i).getPosition().x / 2,
-                                            mDirection.get(i).getPosition().y / 2);
-                            Point end =
-                                    new Point(
-                                            mDirection.get(i + 1).getPosition().x / 2,
-                                            mDirection.get(i + 1).getPosition().y / 2);
-
-                            List<Point> points = mPathFinder.findPath(start, end);
-                            p.addAll(points);
-                            Path path = new Path();
-                            path.moveTo(points.get(0).x * 2, points.get(0).y * 2);
-                            for (int j = 1; j < points.size(); j++) {
-                                path.lineTo(points.get(j).x * 2, points.get(j).y * 2);
-                            }
-                            paths.add(path);
-                        }
-                        mPath = paths;
-                        mPoints = p;
-                        postInvalidate();
-                    }
-                },
-                0,
-                5000);
+        showingDirection = true;
     }
 }

@@ -1,8 +1,8 @@
 package com.example.bach0.hustplant;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,11 +22,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 
 import com.example.bach0.hustplant.Setting.Setting;
-import com.example.bach0.hustplant.database.PlantDao;
 import com.example.bach0.hustplant.database.entity.Plant;
 import com.example.bach0.hustplant.database.entity.Water;
 import com.example.bach0.hustplant.map.MapView;
 import com.example.bach0.hustplant.map.Place;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity
                                                 public void onClick(View view) {
                                                     if (customizeView.sheetBehavior.getState()
                                                             == BottomSheetBehavior
-                                                                    .STATE_COLLAPSED) {
+                                                            .STATE_COLLAPSED) {
                                                         customizeView.addPlace(place);
                                                         customizeView.show();
                                                     }
@@ -78,17 +79,23 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void addAllPlants() {
-        for (final Plant plant : App.get().getDatabase().plantDao().getAll()) {
-            new Handler(App.get().getMainLooper())
-                    .post(
-                            new Runnable() {
-                                @Override
-                                public void run() {
+        final List<Plant> plants = App.get().getDatabase().plantDao().getAll();
+        new Handler(App.get().getMainLooper())
+                .post(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                Place tapTarget = null;
+                                for (final Plant plant : plants) {
                                     final Place place =
                                             mMapView.addPlace(
                                                     plant.getPosition().x,
                                                     plant.getPosition().y,
                                                     plant.getResourceId());
+                                    if (plant.getWaterLevel()
+                                            / plant.getTargetWaterLevel() < 0.5) {
+                                        tapTarget = place;
+                                    }
                                     place.setType(1);
                                     place.setId(plant.getId());
                                     place.setColor(
@@ -108,7 +115,7 @@ public class MainActivity extends AppCompatActivity
                                                     place.startAnimation(anim);
                                                     if (customizeView.sheetBehavior.getState()
                                                             != BottomSheetBehavior
-                                                                    .STATE_COLLAPSED) {
+                                                            .STATE_COLLAPSED) {
 
                                                         treeInfoView.setTree(plant);
                                                         treeInfoView.show();
@@ -117,6 +124,7 @@ public class MainActivity extends AppCompatActivity
                                                         places.add(
                                                                 mMapView.findNearest(
                                                                         plant.getPosition(), 2));
+
                                                         places.add(place);
                                                         customizeView.setPlaceList(places);
                                                     } else {
@@ -126,8 +134,28 @@ public class MainActivity extends AppCompatActivity
                                                 }
                                             });
                                 }
-                            });
-        }
+                                final Place finalTapTarget = tapTarget;
+                                TapTargetView.showFor(MainActivity.this, TapTarget.forView
+                                        (tapTarget, "Tap here to start watering")
+                                        .outerCircleColor(R.color.colorAccent).outerCircleAlpha
+                                                (0.90f).targetCircleColor(R.color.white)
+                                        .titleTextSize(20)
+                                        .titleTextColor(R.color.white)
+                                        .textColor(R.color.white)
+                                        .textTypeface(Typeface.SANS_SERIF)
+                                        .drawShadow(true)
+                                        .cancelable(true)
+                                        .tintTarget(false)
+                                        .transparentTarget(false)
+                                        .targetRadius(40), new TapTargetView.Listener() {
+                                    @Override
+                                    public void onTargetClick(TapTargetView view) {
+                                        super.onTargetClick(view);
+                                        finalTapTarget.performClick();
+                                    }
+                                });
+                            }
+                        });
     }
 
     @Override
