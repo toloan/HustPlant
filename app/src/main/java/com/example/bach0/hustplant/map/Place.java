@@ -3,7 +3,7 @@ package com.example.bach0.hustplant.map;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Point;
+import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -14,37 +14,18 @@ import android.view.View;
 
 import com.example.bach0.hustplant.R;
 
-/** Created by bach0 on 4/12/2018. */
+/**
+ * Created by bach0 on 4/12/2018.
+ */
 public class Place extends View {
     static final float ICON_SIZE = 0.2f;
     Drawable mFrame;
     Drawable mBackground;
-
-    public Drawable getIcon() {
-        return mIcon;
-    }
-
     Drawable mIcon;
     Rect mContentRect = new Rect();
     Rect mIconRect = new Rect();
-
-    @Override
-    public int getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(int id) {
-        this.id = id;
-    }
-
     int id;
-
-    public Point getPosition() {
-        return position;
-    }
-
-    Point position = new Point();
+    PointF position = new PointF();
     int type;
     int mColor = Color.BLACK;
 
@@ -60,6 +41,28 @@ public class Place extends View {
         super(context, attrs, defStyleAttr);
         mFrame = ContextCompat.getDrawable(context, R.drawable.ic_place).mutate();
         mBackground = ContextCompat.getDrawable(context, R.drawable.ic_place_background);
+    }
+
+    public Drawable getIcon() {
+        return mIcon;
+    }
+
+    public void setIcon(int resource) {
+        mIcon = ContextCompat.getDrawable(getContext(), resource);
+    }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public PointF getPosition() {
+        return position;
     }
 
     public int getType() {
@@ -99,15 +102,11 @@ public class Place extends View {
                 (int) (h * (0.3125f + ICON_SIZE)));
     }
 
-    public void setPosition(int x, int y) {
+    public void setPosition(float x, float y) {
         position.set(x, y);
     }
 
-    public void setIcon(int resource) {
-        mIcon = ContextCompat.getDrawable(getContext(), resource);
-    }
-
-    public float distance(Point point) {
+    public float distance(PointF point) {
         return (float)
                 Math.sqrt(
                         (point.x - position.x) * (point.x - position.x)
