@@ -35,7 +35,6 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
   List<Path> mPath = new ArrayList<>();
   Timer mTimer = new Timer();
   Paint mPaint = new Paint();
-  List<Point> mPoints = new ArrayList<>();
 
   public MapView(Context context) {
     super(context);
@@ -83,7 +82,6 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
           public void run() {
             if (!showingDirection) return;
             List<Path> paths = new ArrayList<>();
-            List<Point> p = new ArrayList<>();
             for (int i = 0; i < mDirection.size() - 1; i++) {
               Point start =
                   new Point(
@@ -95,16 +93,16 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
                       (int) (mDirection.get(i + 1).getPosition().y / 2));
 
               List<Point> points = mPathFinder.findPath(start, end);
-              p.addAll(points);
               Path path = new Path();
-              path.moveTo(points.get(0).x * 2, points.get(0).y * 2);
-              for (int j = 1; j < points.size(); j++) {
-                path.lineTo(points.get(j).x * 2, points.get(j).y * 2);
+              if (points != null && points.size() > 0) {
+                path.moveTo(points.get(0).x * 2, points.get(0).y * 2);
+                for (int j = 1; j < points.size(); j++) {
+                  path.lineTo(points.get(j).x * 2, points.get(j).y * 2);
+                }
               }
               paths.add(path);
             }
             mPath = paths;
-            mPoints = p;
             postInvalidate();
           }
         },
