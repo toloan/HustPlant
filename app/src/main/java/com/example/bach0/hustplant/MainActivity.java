@@ -15,6 +15,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +35,7 @@ import com.jmedeisis.bugstick.Joystick;
 import com.jmedeisis.bugstick.JoystickListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity
                   final Place place =
                       mMapView.addPlace(
                           water.getPosition().x, water.getPosition().y, R.drawable.icons8_water_96);
+                  Log.d("abcd", "run: " + Calendar.getInstance().getTime().getTime());
                   place.setId(water.getId());
                   place.setType(2);
                   place.setColor(Color.BLUE);

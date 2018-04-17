@@ -71,22 +71,27 @@ public class Initializer extends Callback {
                 PersonDao personDao = App.get().getDatabase().personDao();
                 personDao.insertAll(persons);
                 WaterHistory[] waterHistories = {
-                  new WaterHistory(1, 1, 1, 0.5f, new Date(1523711333)),
-                  new WaterHistory(2, 2, 4, 0.2f, new Date(1523731331)),
-                  new WaterHistory(3, 3, 1, 0.3f, new Date(1523761376)),
-                  new WaterHistory(4, 1, 2, 0.6f, new Date(1523762342)),
-                  new WaterHistory(5, 4, 1, 0.1f, new Date(1523765337)),
-                  new WaterHistory(6, 5, 3, 0.24f, new Date(1523661331)),
-                  new WaterHistory(7, 2, 1, 0.41f, new Date(1523711338)),
-                  new WaterHistory(8, 3, 1, 0.63f, new Date(1523461328)),
-                  new WaterHistory(9, 1, 4, 0.12f, new Date(1523721139)),
-                  new WaterHistory(10, 1, 1, 0.6f, new Date(1523661350)),
-                  new WaterHistory(11, 1, 2, 0.2f, new Date(1523161380)),
+                  new WaterHistory(1, 1, 1, 0.5f, new Date(1524101193639l)),
+                  new WaterHistory(2, 2, 4, 0.2f, new Date(1524200293639l)),
+                  new WaterHistory(3, 3, 1, 0.3f, new Date(1524039393639l)),
+                  new WaterHistory(4, 1, 2, 0.6f, new Date(1524408493639l)),
+                  new WaterHistory(5, 4, 1, 0.1f, new Date(1524057593639l)),
+                  new WaterHistory(6, 5, 3, 0.24f, new Date(1526066793639l)),
+                  new WaterHistory(7, 2, 1, 0.41f, new Date(1524757793639l)),
+                  new WaterHistory(8, 3, 1, 0.63f, new Date(1528048793639l)),
+                  new WaterHistory(9, 1, 4, 0.12f, new Date(1524939793639l)),
+                  new WaterHistory(10, 1, 1, 0.6f, new Date(1520020793639l)),
+                  new WaterHistory(11, 1, 2, 0.2f, new Date(1524111793639l)),
                 };
                 WaterHistoryDao waterHistoryDao = App.get().getDatabase().waterHistoryDao();
                 waterHistoryDao.insertAll(waterHistories);
                 Water[] waters = {
-                  new Water(1, new Point(114, 345)), new Water(2, new Point(229, 466)),
+                  new Water(1, new Point(114, 345)),
+                  new Water(2, new Point(229, 466)),
+                  new Water(3, new Point(286, 535)),
+                  new Water(4, new Point(490, 507)),
+                  new Water(5, new Point(241, 167)),
+                  new Water(6, new Point(790, 460)),
                 };
                 WaterDao waterDao = App.get().getDatabase().waterDao();
                 waterDao.insertAll(waters);
