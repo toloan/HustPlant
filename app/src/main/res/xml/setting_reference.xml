@@ -13,6 +13,7 @@
             android:key="language"
             android:summary="%s"
             android:title="@string/pref_sync_language" />
+
         <SwitchPreference
             android:defaultValue="true"
             android:icon="@drawable/auto_bright"
