@@ -13,10 +13,20 @@ import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.AsyncTask;
+import android.support.design.widget.Snackbar;
 import android.util.AttributeSet;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.example.bach0.hustplant.MainActivity;
 import com.example.bach0.hustplant.R;
 
 import java.util.ArrayList;
@@ -35,6 +45,11 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
   List<Path> mPath = new ArrayList<>();
   Timer mTimer = new Timer();
   Paint mPaint = new Paint();
+  ImageView waterButton;
+  TextView waterText;
+  boolean blinking = false;
+  float water = 0f;
+  FrameLayout overlayLayout;
 
   public MapView(Context context) {
     super(context);
@@ -49,7 +64,21 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
     LayoutInflater.from(context).inflate(R.layout.map_content, this, true);
     mViewport = findViewById(R.id.map_viewport);
     mViewport.setListener(this);
-    addPlace(412, 430, R.drawable.ic_menu_slideshow);
+    addPlace(412, 430, R.drawable.icons8_user_80);
+    waterButton = new ImageView(context);
+    waterButton.setOnClickListener(
+        new OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            if (showingDirection) {
+              mDirection.add(1, findNearest(mDirection.get(0).getPosition(), 2));
+            }
+          }
+        });
+    waterText = new TextView(context);
+    this.addView(waterButton);
+    this.addView(waterText);
+    waterButton.setBackgroundResource(R.drawable.ic_water_can);
     AsyncTask.execute(
         new Runnable() {
           @Override
@@ -110,6 +139,14 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
         1000);
   }
 
+  public FrameLayout getOverlayLayout() {
+    return overlayLayout;
+  }
+
+  public void setOverlayLayout(FrameLayout overlayLayout) {
+    this.overlayLayout = overlayLayout;
+  }
+
   @Override
   protected void onLayout(boolean b, int i, int i1, int i2, int i3) {
     mViewport.layout(i, i1, i2, i3);
@@ -138,8 +175,46 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
     if (showingDirection) {
       if (mDirection.size() > 1
           && mDirection.get(0).distance(mDirection.get(1).getPosition()) < 15f) {
-        mDirection.remove(1);
+        if (mDirection.get(1).getType() == 2 && water > 0.2f) {
+          mDirection.remove(1);
+        } else if (mDirection.get(1).getType() == 1) {
+          if (mDirection.get(1).getValue() > mDirection.get(1).getMaxValue() * 0.9) {
+            mDirection.remove(1);
+          }
+        }
       }
+      if (findNearest(mDirection.get(0).getPosition(), 2).distance(mDirection.get(0).getPosition())
+              < 15f
+          && water < 5f) {
+        water += 0.001f;
+      }
+      Place place = findNearest(mDirection.get(0).getPosition(), 1);
+      if (place.distance(mDirection.get(0).getPosition()) < 15f) {
+        if (place.getValue() < place.getMaxValue() - 0.002 && water > 0.002f) {
+          water -= 0.002f;
+          place.setValue(place.getValue() + 0.002f);
+          place.setColor(
+              MainActivity.blendColors(
+                  Color.GREEN, Color.RED, place.getValue() / place.getMaxValue()));
+        }
+      }
+      if (water < 0.2f) {
+        if (!blinking) {
+          if (mDirection.get(1).getType() != 2) {
+            Snackbar.make(this, "Press the watering can to find water source", Snackbar.LENGTH_LONG)
+                .show();
+          }
+          Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_blink);
+          waterButton.startAnimation(anim);
+          blinking = true;
+        }
+        waterText.setTextColor(Color.RED);
+      } else {
+        waterText.setTextColor(Color.BLACK);
+        waterButton.clearAnimation();
+        blinking = false;
+      }
+      if (water > 5f) water = 5f;
       int circleSize = 6;
       mPaint.setColor(Color.BLUE);
       mPaint.setStrokeWidth(circleSize * mViewport.getScaleFactor());
@@ -177,6 +252,21 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
       update();
       postInvalidate();
     }
+    if (mDirection.size() == 1 && showingDirection) {
+      blinking = false;
+      waterButton.clearAnimation();
+      waterText.setTextColor(Color.BLACK);
+      showingDirection = false;
+      for (Place place : mPlaceList) {
+        place.setAlpha(1f);
+      }
+      overlayLayout.removeAllViews();
+      Snackbar.make(
+              this,
+              "You have reached your last destination. Congratulations!!",
+              Snackbar.LENGTH_LONG)
+          .show();
+    }
   }
 
   @Override
@@ -196,7 +286,48 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
       place.setBottom(bottomRight.y);
       place.setLeft(topLeft.x);
       place.setRight(bottomRight.x);
+      if (showingDirection) {
+        place.postInvalidate();
+      }
     }
+    bringChildToFront(waterButton);
+    bringChildToFront(waterText);
+    waterText.setGravity(Gravity.CENTER);
+    waterText.setText(String.format("%.0fml", water * 1000));
+    waterText.setTextSize(20);
+
+    waterButton.setTop(
+        (int)
+            TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
+    waterButton.setLeft(
+        (int)
+            TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics()));
+    waterButton.setRight(
+        (int)
+            TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 72, getResources().getDisplayMetrics()));
+    waterButton.setBottom(
+        (int)
+            TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics()));
+    waterText.setTop(
+        (int)
+            TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 60, getResources().getDisplayMetrics()));
+    waterText.setLeft(
+        (int)
+            TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics()));
+    waterText.setRight(
+        (int)
+            TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics()));
+    waterText.setBottom(
+        (int)
+            TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics()));
   }
 
   public Place findNearest(PointF pos, int type) {

@@ -4,36 +4,33 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-/**
- * Created by bach0 on 4/15/2018.
- */
-
+/** Created by bach0 on 4/15/2018. */
 @Entity(tableName = "person")
 public class Person {
-    @PrimaryKey(autoGenerate = true)
-    private int id;
+  @PrimaryKey(autoGenerate = true)
+  private int id;
 
-    @ColumnInfo(name = "name")
-    private String name;
+  @ColumnInfo(name = "name")
+  private String name;
 
-    public Person(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
+  public Person(int id, String name) {
+    this.id = id;
+    this.name = name;
+  }
 
-    public int getId() {
-        return id;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 }

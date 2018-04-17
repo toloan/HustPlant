@@ -11,16 +11,16 @@ import com.example.bach0.hustplant.database.entity.WaterHistory;
 
 /** Created by bach0 on 4/15/2018. */
 @Database(
-    entities = {Plant.class, Person.class, WaterHistory.class, Water.class},
-    version = 1
+  entities = {Plant.class, Person.class, WaterHistory.class, Water.class},
+  version = 1
 )
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
-    public abstract PlantDao plantDao();
+  public abstract PlantDao plantDao();
 
-    public abstract PersonDao personDao();
+  public abstract PersonDao personDao();
 
-    public abstract WaterHistoryDao waterHistoryDao();
+  public abstract WaterHistoryDao waterHistoryDao();
 
-    public abstract WaterDao waterDao();
+  public abstract WaterDao waterDao();
 }

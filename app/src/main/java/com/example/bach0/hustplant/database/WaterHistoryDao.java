@@ -12,21 +12,21 @@ import java.util.List;
 /** Created by bach0 on 4/15/2018. */
 @Dao
 public interface WaterHistoryDao {
-    @Query("SELECT * FROM water_history")
-    List<WaterHistory> getAll();
+  @Query("SELECT * FROM water_history")
+  List<WaterHistory> getAll();
 
-    @Query("SELECT * FROM water_history WHERE id IN (:waterHistoryIds)")
-    List<WaterHistory> loadAllByIds(int[] waterHistoryIds);
+  @Query("SELECT * FROM water_history WHERE id IN (:waterHistoryIds)")
+  List<WaterHistory> loadAllByIds(int[] waterHistoryIds);
 
-    @Query("SELECT * FROM water_history WHERE person_id = :personId")
-    List<WaterHistory> findByPerson(int personId);
+  @Query("SELECT * FROM water_history WHERE person_id = :personId")
+  List<WaterHistory> findByPerson(int personId);
 
-    @Query("SELECT * FROM water_history WHERE plant_id = :plantId")
-    List<WaterHistory> findByPlant(int plantId);
+  @Query("SELECT * FROM water_history WHERE plant_id = :plantId")
+  List<WaterHistory> findByPlant(int plantId);
 
-    @Insert
-    void insertAll(WaterHistory... persons);
+  @Insert
+  void insertAll(WaterHistory... persons);
 
-    @Delete
-    void delete(WaterHistory person);
+  @Delete
+  void delete(WaterHistory person);
 }

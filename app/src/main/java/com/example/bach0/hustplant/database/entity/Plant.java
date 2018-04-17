@@ -6,92 +6,99 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.graphics.Point;
 
-/**
- * Created by bach0 on 4/15/2018.
- */
-
+/** Created by bach0 on 4/15/2018. */
 @Entity(tableName = "plant")
 public class Plant {
-    @PrimaryKey(autoGenerate = true)
-    private int id;
-    @Embedded
-    private Point position;
-    @ColumnInfo(name = "name")
-    private String name;
-    @ColumnInfo(name = "description")
-    private String description;
-    @ColumnInfo(name = "water_level")
-    private float waterLevel;
-    @ColumnInfo(name = "target_water_level")
-    private float targetWaterLevel;
-    @ColumnInfo(name = "resource_id")
-    private int resourceId;
+  @PrimaryKey(autoGenerate = true)
+  private int id;
 
-    public Plant(int id, Point position, String name, String description, float waterLevel, float
-            targetWaterLevel, int resourceId) {
-        this.id = id;
-        this.position = position;
-        this.name = name;
-        this.description = description;
-        this.waterLevel = waterLevel;
-        this.targetWaterLevel = targetWaterLevel;
-        this.resourceId = resourceId;
-    }
+  @Embedded private Point position;
 
-    public float getWaterLevel() {
-        return waterLevel;
-    }
+  @ColumnInfo(name = "name")
+  private String name;
 
-    public void setWaterLevel(float waterLevel) {
-        this.waterLevel = waterLevel;
-    }
+  @ColumnInfo(name = "description")
+  private String description;
 
-    public float getTargetWaterLevel() {
-        return targetWaterLevel;
-    }
+  @ColumnInfo(name = "water_level")
+  private float waterLevel;
 
-    public void setTargetWaterLevel(float targetWaterLevel) {
-        this.targetWaterLevel = targetWaterLevel;
-    }
+  @ColumnInfo(name = "target_water_level")
+  private float targetWaterLevel;
 
-    public int getResourceId() {
-        return resourceId;
-    }
+  @ColumnInfo(name = "resource_id")
+  private int resourceId;
 
-    public void setResourceId(int resourceId) {
-        this.resourceId = resourceId;
-    }
+  public Plant(
+      int id,
+      Point position,
+      String name,
+      String description,
+      float waterLevel,
+      float targetWaterLevel,
+      int resourceId) {
+    this.id = id;
+    this.position = position;
+    this.name = name;
+    this.description = description;
+    this.waterLevel = waterLevel;
+    this.targetWaterLevel = targetWaterLevel;
+    this.resourceId = resourceId;
+  }
 
-    public Point getPosition() {
-        return position;
-    }
+  public float getWaterLevel() {
+    return waterLevel;
+  }
 
-    public void setPosition(Point position) {
-        this.position = position;
-    }
+  public void setWaterLevel(float waterLevel) {
+    this.waterLevel = waterLevel;
+  }
 
-    public int getId() {
-        return id;
-    }
+  public float getTargetWaterLevel() {
+    return targetWaterLevel;
+  }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  public void setTargetWaterLevel(float targetWaterLevel) {
+    this.targetWaterLevel = targetWaterLevel;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public int getResourceId() {
+    return resourceId;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setResourceId(int resourceId) {
+    this.resourceId = resourceId;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public Point getPosition() {
+    return position;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public void setPosition(Point position) {
+    this.position = position;
+  }
 
+  public int getId() {
+    return id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
 }

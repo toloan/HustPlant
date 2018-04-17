@@ -17,43 +17,42 @@ import com.example.bach0.hustplant.R;
 
 import java.util.Locale;
 
-public class SettingFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
-    @Override
-    public void onCreate(Bundle saveInstanceState) {
-        super.onCreate(saveInstanceState);
-        addPreferencesFromResource(R.xml.setting_reference);
-        
+public class SettingFragment extends PreferenceFragment
+    implements SharedPreferences.OnSharedPreferenceChangeListener {
+  @Override
+  public void onCreate(Bundle saveInstanceState) {
+    super.onCreate(saveInstanceState);
+    addPreferencesFromResource(R.xml.setting_reference);
+  }
+
+  @RequiresApi(api = Build.VERSION_CODES.M)
+  @Override
+  public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+    Preference preference = findPreference(key);
+
+    /* update summary */
+    if (key.equals("language")) {
+      preference.setSummary(((ListPreference) preference).getEntry());
+      Locale myLocale = new Locale(((ListPreference) preference).getValue());
+      Resources res = getResources();
+      DisplayMetrics dm = res.getDisplayMetrics();
+      Configuration conf = res.getConfiguration();
+      conf.locale = myLocale;
+      res.updateConfiguration(conf, dm);
+      Intent refresh = new Intent(this.getActivity(), MainActivity.class);
+      startActivity(refresh);
     }
+  }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        Preference preference = findPreference(key);
+  @Override
+  public void onResume() {
+    super.onResume();
+    getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+  }
 
-        /* update summary */
-        if (key.equals("language")) {
-            preference.setSummary(((ListPreference) preference).getEntry());
-            Locale myLocale = new Locale(((ListPreference) preference).getValue());
-            Resources res = getResources();
-            DisplayMetrics dm = res.getDisplayMetrics();
-            Configuration conf = res.getConfiguration();
-            conf.locale = myLocale;
-            res.updateConfiguration(conf, dm);
-            Intent refresh = new Intent(this.getActivity(), MainActivity.class);
-            startActivity(refresh);
-        }
-    }
-    @Override
-    public void onResume() {
-        super.onResume();
-        getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    public void onPause() {
-        getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
-        super.onPause();
-    }
-
-
+  @Override
+  public void onPause() {
+    getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+    super.onPause();
+  }
 }

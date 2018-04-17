@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity
   private TreeInfoView treeInfoView;
   private CustomizeView customizeView;
 
-  private static int blendColors(int color1, int color2, float ratio) {
+  public static int blendColors(int color1, int color2, float ratio) {
     final float inverseRation = 1f - ratio;
     float r = (Color.red(color1) * ratio) + (Color.red(color2) * inverseRation);
     float g = (Color.green(color1) * ratio) + (Color.green(color2) * inverseRation);
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity
                 public void run() {
                   final Place place =
                       mMapView.addPlace(
-                          water.getPosition().x, water.getPosition().y, R.drawable.ic_menu_manage);
+                          water.getPosition().x, water.getPosition().y, R.drawable.icons8_water_96);
                   place.setId(water.getId());
                   place.setType(2);
                   place.setColor(Color.BLUE);
@@ -101,6 +101,8 @@ public class MainActivity extends AppCompatActivity
                           Color.GREEN,
                           Color.RED,
                           plant.getWaterLevel() / plant.getTargetWaterLevel()));
+                  place.setValue(plant.getWaterLevel());
+                  place.setMaxValue(plant.getTargetWaterLevel());
                   place.setOnClickListener(
                       new View.OnClickListener() {
                         @Override
@@ -221,6 +223,7 @@ public class MainActivity extends AppCompatActivity
         });
     navigationView.setCheckedItem(R.id.map);
     final FrameLayout overlayLayout = findViewById(R.id.overlay_layout);
+    mMapView.setOverlayLayout(overlayLayout);
     View.OnClickListener waterNowClickListener =
         new View.OnClickListener() {
           @Override

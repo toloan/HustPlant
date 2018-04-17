@@ -8,28 +8,29 @@ import android.graphics.Point;
 /** Created by bach0 on 4/16/2018. */
 @Entity(tableName = "water")
 public class Water {
-    @PrimaryKey(autoGenerate = true)
-    private int id;
-    @Embedded private Point position;
+  @PrimaryKey(autoGenerate = true)
+  private int id;
 
-    public Water(int id, Point position) {
-        this.id = id;
-        this.position = position;
-    }
+  @Embedded private Point position;
 
-    public int getId() {
-        return id;
-    }
+  public Water(int id, Point position) {
+    this.id = id;
+    this.position = position;
+  }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public Point getPosition() {
-        return position;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setPosition(Point position) {
-        this.position = position;
-    }
+  public Point getPosition() {
+    return position;
+  }
+
+  public void setPosition(Point position) {
+    this.position = position;
+  }
 }

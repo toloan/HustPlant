@@ -14,102 +14,117 @@ import android.view.View;
 
 import com.example.bach0.hustplant.R;
 
-/**
- * Created by bach0 on 4/12/2018.
- */
+/** Created by bach0 on 4/12/2018. */
 public class Place extends View {
-    static final float ICON_SIZE = 0.2f;
-    Drawable mFrame;
-    Drawable mBackground;
-    Drawable mIcon;
-    Rect mContentRect = new Rect();
-    Rect mIconRect = new Rect();
-    int id;
-    PointF position = new PointF();
-    int type;
-    int mColor = Color.BLACK;
+  static final float ICON_SIZE = 0.2f;
+  Drawable mFrame;
+  Drawable mBackground;
+  Drawable mIcon;
+  Rect mContentRect = new Rect();
+  Rect mIconRect = new Rect();
+  int id;
+  PointF position = new PointF();
+  int type;
+  float value = 0f;
+  float maxValue = 0f;
+  int mColor = Color.BLACK;
 
-    public Place(Context context) {
-        this(context, null, 0);
-    }
+  public Place(Context context) {
+    this(context, null, 0);
+  }
+  public Place(Context context, @Nullable AttributeSet attrs) {
+    this(context, attrs, 0);
+  }
 
-    public Place(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
+  public Place(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    super(context, attrs, defStyleAttr);
+    mFrame = ContextCompat.getDrawable(context, R.drawable.ic_place).mutate();
+    mBackground = ContextCompat.getDrawable(context, R.drawable.ic_place_background);
+  }
 
-    public Place(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        mFrame = ContextCompat.getDrawable(context, R.drawable.ic_place).mutate();
-        mBackground = ContextCompat.getDrawable(context, R.drawable.ic_place_background);
-    }
+  public float getMaxValue() {
+    return maxValue;
+  }
 
-    public Drawable getIcon() {
-        return mIcon;
-    }
+  public void setMaxValue(float maxValue) {
+    this.maxValue = maxValue;
+  }
 
-    public void setIcon(int resource) {
-        mIcon = ContextCompat.getDrawable(getContext(), resource);
-    }
+  public float getValue() {
+    return value;
+  }
 
-    @Override
-    public int getId() {
-        return id;
-    }
+  public void setValue(float value) {
+    this.value = value;
+  }
 
-    @Override
-    public void setId(int id) {
-        this.id = id;
-    }
+  public Drawable getIcon() {
+    return mIcon;
+  }
 
-    public PointF getPosition() {
-        return position;
-    }
+  public void setIcon(int resource) {
+    mIcon = ContextCompat.getDrawable(getContext(), resource);
+  }
 
-    public int getType() {
-        return type;
-    }
+  @Override
+  public int getId() {
+    return id;
+  }
 
-    public void setType(int type) {
-        this.type = type;
-    }
+  @Override
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setColor(int color) {
-        mColor = color;
-    }
+  public PointF getPosition() {
+    return position;
+  }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        mBackground.setBounds(mContentRect);
-        mFrame.setBounds(mContentRect);
-        mFrame.setColorFilter(mColor, PorterDuff.Mode.MULTIPLY);
-        mFrame.draw(canvas);
-        mBackground.draw(canvas);
-        if (mIcon != null) {
-            mIcon.setBounds(mIconRect);
-            mIcon.draw(canvas);
-        }
-    }
+  public int getType() {
+    return type;
+  }
 
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        mContentRect.set(0, 0, w, h);
-        mIconRect.set(
-                (int) (w * (0.5f - ICON_SIZE)),
-                (int) (h * (0.3125f - ICON_SIZE)),
-                (int) (w * (0.5f + ICON_SIZE)),
-                (int) (h * (0.3125f + ICON_SIZE)));
-    }
+  public void setType(int type) {
+    this.type = type;
+  }
 
-    public void setPosition(float x, float y) {
-        position.set(x, y);
-    }
+  public void setColor(int color) {
+    mColor = color;
+  }
 
-    public float distance(PointF point) {
-        return (float)
-                Math.sqrt(
-                        (point.x - position.x) * (point.x - position.x)
-                                + (point.y - position.y) * (point.y - position.y));
+  @Override
+  protected void onDraw(Canvas canvas) {
+    super.onDraw(canvas);
+    mBackground.setBounds(mContentRect);
+    mFrame.setBounds(mContentRect);
+    mFrame.setColorFilter(mColor, PorterDuff.Mode.MULTIPLY);
+    mFrame.draw(canvas);
+    mBackground.draw(canvas);
+    if (mIcon != null) {
+      mIcon.setBounds(mIconRect);
+      mIcon.draw(canvas);
     }
+  }
+
+  @Override
+  protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+    super.onSizeChanged(w, h, oldw, oldh);
+    mContentRect.set(0, 0, w, h);
+    mIconRect.set(
+        (int) (w * (0.5f - ICON_SIZE)),
+        (int) (h * (0.3125f - ICON_SIZE)),
+        (int) (w * (0.5f + ICON_SIZE)),
+        (int) (h * (0.3125f + ICON_SIZE)));
+  }
+
+  public void setPosition(float x, float y) {
+    position.set(x, y);
+  }
+
+  public float distance(PointF point) {
+    return (float)
+        Math.sqrt(
+            (point.x - position.x) * (point.x - position.x)
+                + (point.y - position.y) * (point.y - position.y));
+  }
 }

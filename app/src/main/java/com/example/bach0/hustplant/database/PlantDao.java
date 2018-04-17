@@ -12,21 +12,21 @@ import java.util.List;
 /** Created by bach0 on 4/15/2018. */
 @Dao
 public interface PlantDao {
-    @Query("SELECT * FROM plant")
-    List<Plant> getAll();
+  @Query("SELECT * FROM plant")
+  List<Plant> getAll();
 
-    @Query("SELECT * FROM plant WHERE id IN (:plantIds)")
-    List<Plant> loadAllByIds(int[] plantIds);
+  @Query("SELECT * FROM plant WHERE id IN (:plantIds)")
+  List<Plant> loadAllByIds(int[] plantIds);
 
-    @Query("SELECT * FROM plant WHERE id = :plantId LIMIT 1")
-    Plant loadById(int plantId);
+  @Query("SELECT * FROM plant WHERE id = :plantId LIMIT 1")
+  Plant loadById(int plantId);
 
-    @Query("SELECT * FROM plant WHERE name LIKE :name")
-    List<Plant> findByName(String name);
+  @Query("SELECT * FROM plant WHERE name LIKE :name")
+  List<Plant> findByName(String name);
 
-    @Insert
-    void insertAll(Plant... plants);
+  @Insert
+  void insertAll(Plant... plants);
 
-    @Delete
-    void delete(Plant plant);
+  @Delete
+  void delete(Plant plant);
 }

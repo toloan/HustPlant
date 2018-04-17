@@ -19,153 +19,149 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-/**
- * Created by bach0 on 4/16/2018.
- */
+/** Created by bach0 on 4/16/2018. */
 public class DestinationAdapter extends GestureAdapter<Place, DestinationAdapter.ViewHolder>
-        implements GestureAdapter.OnDataChangeListener<Place> {
-    TextView distance;
-    View view;
-    Place current;
-    TextView total;
+    implements GestureAdapter.OnDataChangeListener<Place> {
+  TextView distance;
+  View view;
+  Place current;
+  TextView total;
 
-    public DestinationAdapter(TextView distance, View view, TextView total, Place current) {
-        setDataChangeListener(this);
-        this.distance = distance;
-        this.view = view;
-        this.current = current;
-        this.total = total;
+  public DestinationAdapter(TextView distance, View view, TextView total, Place current) {
+    setDataChangeListener(this);
+    this.distance = distance;
+    this.view = view;
+    this.current = current;
+    this.total = total;
+  }
+
+  @Override
+  public void setData(List<Place> data) {
+    super.setData(data);
+    distance.setText(String.format("%.1fm", current.distance(getItem(0).getPosition())));
+    updateTotal();
+  }
+
+  void updateTotal() {
+    float total = 0;
+    for (int i = 0; i < getData().size() - 1; i++) {
+      total += getData().get(i).distance(getData().get(i + 1).getPosition());
     }
+    this.total.setText(String.format("%.1fm", total));
+  }
 
-    @Override
-    public void setData(List<Place> data) {
-        super.setData(data);
-        distance.setText(String.format("%.1fm", current.distance(getItem(0).getPosition())));
-        updateTotal();
+  @Override
+  public boolean add(Place item) {
+    boolean result = super.add(item);
+    if (getItemCount() > 0) {
+      distance.setText("" + current.distance(getItem(0).getPosition()) + "m");
     }
+    notifyItemChanged(getItemCount() - 2);
+    updateTotal();
+    return result;
+  }
 
-    void updateTotal() {
-        float total = 0;
-        for (int i = 0; i < getData().size() - 1; i++) {
-            total += getData().get(i).distance(getData().get(i + 1).getPosition());
-        }
-        this.total.setText(String.format("%.1fm", total));
+  // Create new views (invoked by the layout manager)
+  @Override
+  public DestinationAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    // create a new view
+    View v =
+        LayoutInflater.from(parent.getContext())
+            .inflate(R.layout.destination_layout, parent, false);
+    ViewHolder vh = new ViewHolder(v);
+    return vh;
+  }
+
+  // Replace the contents of a view (invoked by the layout manager)
+  @Override
+  public void onBindViewHolder(
+      @NonNull final DestinationAdapter.ViewHolder holder, final int position) {
+    // - get element from your dataset at this position
+    // - replace the contents of the view with that element
+    distance.setText(String.format("%.1fm", current.distance(getItem(0).getPosition()) / 10));
+    final ViewHolder vh = holder;
+    final Place current = getData().get(position);
+    if (position == getItemCount() - 1) {
+      holder.mDistanceView.setVisibility(View.GONE);
+    } else {
+      holder.mDistanceView.setVisibility(View.VISIBLE);
+      Place next = getData().get(position + 1);
+      holder.mDistance.setText(String.format("%.1fm", current.distance(next.getPosition()) / 10));
     }
-
-    @Override
-    public boolean add(Place item) {
-        boolean result = super.add(item);
-        if (getItemCount() > 0) {
-            distance.setText("" + current.distance(getItem(0).getPosition()) + "m");
-        }
-        notifyItemChanged(getItemCount() - 2);
-        updateTotal();
-        return result;
-    }
-
-    // Create new views (invoked by the layout manager)
-    @Override
-    public DestinationAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // create a new view
-        View v =
-                LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.destination_layout, parent, false);
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
-    }
-
-    // Replace the contents of a view (invoked by the layout manager)
-    @Override
-    public void onBindViewHolder(
-            @NonNull final DestinationAdapter.ViewHolder holder, final int position) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
-        distance.setText(String.format("%.1fm", current.distance(getItem(0).getPosition())));
-        final ViewHolder vh = holder;
-        final Place current = getData().get(position);
-        if (position == getItemCount() - 1) {
-            holder.mDistanceView.setVisibility(View.GONE);
-        } else {
-            holder.mDistanceView.setVisibility(View.VISIBLE);
-            Place next = getData().get(position + 1);
-            holder.mDistance.setText(String.format("%.1fm", current.distance(next.getPosition())));
-        }
-        holder.mIcon.setImageDrawable(current.getIcon());
-        AsyncTask.execute(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        if (current.getType() == 1) {
-                            final PlantDao plantDao = App.get().getDatabase().plantDao();
-                            final String name = plantDao.loadById(current.getId()).getName();
-                            new Handler(App.get().getMainLooper())
-                                    .post(
-                                            new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    holder.mName.setText(name);
-                                                }
-                                            });
-                        } else if (current.getType() == 2) {
-                            final WaterDao waterDao = App.get().getDatabase().waterDao();
-                            final Point name = waterDao.loadById(current.getId()).getPosition();
-                            new Handler(App.get().getMainLooper())
-                                    .post(
-                                            new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    holder.mName.setText(
-                                                            "Water (" + name.x + "," + name.y
-                                                                    + ")");
-                                                }
-                                            });
+    holder.mIcon.setImageDrawable(current.getIcon());
+    AsyncTask.execute(
+        new Runnable() {
+          @Override
+          public void run() {
+            if (current.getType() == 1) {
+              final PlantDao plantDao = App.get().getDatabase().plantDao();
+              final String name = plantDao.loadById(current.getId()).getName();
+              new Handler(App.get().getMainLooper())
+                  .post(
+                      new Runnable() {
+                        @Override
+                        public void run() {
+                          holder.mName.setText(name);
                         }
-                    }
-                });
+                      });
+            } else if (current.getType() == 2) {
+              final WaterDao waterDao = App.get().getDatabase().waterDao();
+              final Point name = waterDao.loadById(current.getId()).getPosition();
+              new Handler(App.get().getMainLooper())
+                  .post(
+                      new Runnable() {
+                        @Override
+                        public void run() {
+                          holder.mName.setText("Water (" + name.x + "," + name.y + ")");
+                        }
+                      });
+            }
+          }
+        });
+  }
+
+  @Override
+  public void onItemRemoved(Place item, int position) {
+    if (getItemCount() == 0) {
+      view.setVisibility(View.GONE);
+    } else {
+      view.setVisibility(View.VISIBLE);
+      distance.setText(String.format("%.1fm", current.distance(getItem(0).getPosition()) / 10));
+    }
+  }
+
+  @Override
+  public void onItemReorder(Place item, int fromPos, int toPos) {
+    notifyItemChanged(fromPos);
+    notifyItemChanged(toPos);
+  }
+
+  // Provide a reference to the views for each data item
+  // Complex data items may need more than one view per item, and
+  // you provide access to all the views for a data item in a view holder
+  public static class ViewHolder extends GestureViewHolder {
+    // each data item is just a string in this case
+    public TextView mName;
+    public TextView mDistance;
+    public CircleImageView mIcon;
+    public View mDistanceView;
+
+    public ViewHolder(View v) {
+      super(v);
+      mName = v.findViewById(R.id.destination_name);
+      mDistance = v.findViewById(R.id.distance);
+      mIcon = v.findViewById(R.id.destination_icon);
+      mDistanceView = v.findViewById(R.id.distance_view);
     }
 
     @Override
-    public void onItemRemoved(Place item, int position) {
-        if (getItemCount() == 0) {
-            view.setVisibility(View.GONE);
-        } else {
-            view.setVisibility(View.VISIBLE);
-            distance.setText("" + current.distance(getItem(0).getPosition()) + "m");
-        }
+    public boolean canDrag() {
+      return true;
     }
 
     @Override
-    public void onItemReorder(Place item, int fromPos, int toPos) {
-        notifyItemChanged(fromPos);
-        notifyItemChanged(toPos);
+    public boolean canSwipe() {
+      return true;
     }
-
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends GestureViewHolder {
-        // each data item is just a string in this case
-        public TextView mName;
-        public TextView mDistance;
-        public CircleImageView mIcon;
-        public View mDistanceView;
-
-        public ViewHolder(View v) {
-            super(v);
-            mName = v.findViewById(R.id.destination_name);
-            mDistance = v.findViewById(R.id.distance);
-            mIcon = v.findViewById(R.id.destination_icon);
-            mDistanceView = v.findViewById(R.id.distance_view);
-        }
-
-        @Override
-        public boolean canDrag() {
-            return true;
-        }
-
-        @Override
-        public boolean canSwipe() {
-            return true;
-        }
-    }
+  }
 }
