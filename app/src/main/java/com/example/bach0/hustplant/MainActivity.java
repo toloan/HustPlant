@@ -1,5 +1,7 @@
 package com.example.bach0.hustplant;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PointF;
@@ -24,6 +26,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
+import com.example.bach0.hustplant.Helper.AudioVoice;
 import com.example.bach0.hustplant.Setting.Setting;
 import com.example.bach0.hustplant.database.entity.Plant;
 import com.example.bach0.hustplant.database.entity.Water;
@@ -43,6 +46,7 @@ public class MainActivity extends AppCompatActivity
   private MapView mMapView;
   private TreeInfoView treeInfoView;
   private CustomizeView customizeView;
+  public static Context context;
 
   public static int blendColors(int color1, int color2, float ratio) {
     final float inverseRation = 1f - ratio;
@@ -50,6 +54,29 @@ public class MainActivity extends AppCompatActivity
     float g = (Color.green(color1) * ratio) + (Color.green(color2) * inverseRation);
     float b = (Color.blue(color1) * ratio) + (Color.blue(color2) * inverseRation);
     return Color.rgb((int) r, (int) g, (int) b);
+  }
+
+  public static void Voice(String action,Context context){
+      AudioVoice audio=new AudioVoice();
+
+      switch (action){
+          case "stop":
+              audio.StopRing(context).start();
+              break;
+          case "start":
+              audio.GoStraightRing(context).start();
+              break;
+          case "stop_water":
+              audio.StopWaterRing(context).start();
+              break;
+          case "start_water":
+              audio.StartWaterRing(context).start();
+              break;
+          case "out_of_water":
+              audio.OutOfWater(context).start();
+          default:
+              break;
+      }
   }
 
   private void addAllWaters() {
@@ -162,6 +189,7 @@ public class MainActivity extends AppCompatActivity
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+    context=App.get().getApplicationContext();
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
@@ -231,6 +259,7 @@ public class MainActivity extends AppCompatActivity
         new View.OnClickListener() {
           @Override
           public void onClick(View v) {
+              MainActivity.Voice("start",getBaseContext());
             mMapView.showDirection(customizeView.getPlaceList());
             customizeView.hide();
             treeInfoView.hide();

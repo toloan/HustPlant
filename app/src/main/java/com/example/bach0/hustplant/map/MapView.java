@@ -50,6 +50,7 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
   boolean blinking = false;
   float water = 0f;
   FrameLayout overlayLayout;
+  boolean first_time_water=true;
 
   public MapView(Context context) {
     super(context);
@@ -180,6 +181,7 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
         } else if (mDirection.get(1).getType() == 1) {
           if (mDirection.get(1).getValue() > mDirection.get(1).getMaxValue() * 0.9) {
             mDirection.remove(1);
+            MainActivity.Voice("stop_water",getContext());
           }
         }
       }
@@ -192,14 +194,22 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
       if (place.distance(mDirection.get(0).getPosition()) < 15f) {
         if (place.getValue() < place.getMaxValue() - 0.002 && water > 0.002f) {
           water -= 0.002f;
+          if(first_time_water){
+            MainActivity.Voice("start_water",getContext());
+            first_time_water=false;
+          }
           place.setValue(place.getValue() + 0.002f);
           place.setColor(
               MainActivity.blendColors(
                   Color.GREEN, Color.RED, place.getValue() / place.getMaxValue()));
         }
       }
+      else {
+        first_time_water=true;
+      }
       if (water < 0.2f) {
         if (!blinking) {
+          MainActivity.Voice("out_of_water",getContext());
           if (mDirection.get(1).getType() != 2) {
             Snackbar.make(this, "Press the watering can to find water source", Snackbar.LENGTH_LONG)
                 .show();
@@ -261,11 +271,13 @@ public class MapView extends ViewGroup implements MapViewport.Listener {
         place.setAlpha(1f);
       }
       overlayLayout.removeAllViews();
+      MainActivity.Voice("stop",getContext());
       Snackbar.make(
               this,
               "You have reached your last destination. Congratulations!!",
               Snackbar.LENGTH_LONG)
           .show();
+
     }
   }
 
